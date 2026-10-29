@@ -82,3 +82,15 @@ def test_find_practitioner_is_case_sensitive():
     service, _ = make_practitioner_service()
     with pytest.raises(LookupError):
         service.find_practitioner('dr1')
+
+
+def test_find_patient_non_string_id_raises_value_error():
+    service, _ = make_patient_service()
+    with pytest.raises(ValueError):
+        service.find_patient(None)
+
+
+def test_find_practitioner_non_string_id_raises_value_error():
+    service, _ = make_practitioner_service()
+    with pytest.raises(ValueError):
+        service.find_practitioner(None)

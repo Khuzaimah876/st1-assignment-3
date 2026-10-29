@@ -5,7 +5,7 @@ from datetime import datetime
 import pytest
 
 from smartcare.data_store import SmartCareDataStore
-from smartcare.domain import AppointmentStatus
+from smartcare.domain import Appointment, AppointmentStatus
 from smartcare.services import (
     AppointmentService,
     PatientService,
@@ -163,3 +163,21 @@ def test_cancelled_slot_can_be_booked_again():
         'A2', 'P1', 'DR1', datetime(2026, 10, 1, 9, 0),
     )
     assert new.status is AppointmentStatus.SCHEDULED
+
+
+
+def test_cancel_completed_appointment_raises_value_error_and_keeps_state():
+    store = SmartCareDataStore()
+    patient = PatientService(store).register_patient('P1', 'Alice Example')
+    practitioner = PractitionerService(store).register_practitioner(
+        'DR1', 'Dr Sam Example', 'General Practice',
+    )
+    completed = Appointment(
+        'A2', patient, practitioner, datetime(2026, 10, 1, 10, 0),
+        AppointmentStatus.COMPLETED,
+    )
+    store.add_appointment(completed)
+    service = AppointmentService(store)
+    with pytest.raises(ValueError):
+        service.cancel_appointment('A2')
+    assert completed.status is AppointmentStatus.COMPLETED

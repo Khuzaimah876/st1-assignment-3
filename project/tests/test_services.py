@@ -181,3 +181,11 @@ def test_cancel_completed_appointment_raises_value_error_and_keeps_state():
     with pytest.raises(ValueError):
         service.cancel_appointment('A2')
     assert completed.status is AppointmentStatus.COMPLETED
+
+
+
+def test_cancel_non_string_id_raises_value_error():
+    service, appointment = make_appointment_service()
+    with pytest.raises(ValueError):
+        service.cancel_appointment(None)
+    assert appointment.status is AppointmentStatus.SCHEDULED

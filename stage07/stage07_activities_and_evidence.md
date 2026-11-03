@@ -134,7 +134,7 @@ Arrange test data; act on one meaningful behaviour; assert the required observab
 | T-DOM-13 | New Appointment A1, cancelled once | `appointment.cancel()` again inside `pytest.raises(ValueError)` | `status is CANCELLED` | Uses the specific `ValueError`, not a broad catch. The status check shows the failed call did not change state (AC-05.3) |
 | T-SVC-01 | Fresh store + PatientService | `register_patient('P1', 'Alice Example')` | `find_patient('P1') is patient`; `list_patients() == [patient]` | Proves storage through the workflow (AC-01.1), not just construction. `is` rules out a copy |
 | T-SVC-07 | Store with P1, DR1, DR2 | `book_appointment('A1','P1','DR1',WHEN)` | Found `is` booked; list `== [booked]`; SCHEDULED; participants `is` the registered objects | Covers every part of AC-03.1: registered participants, unique ID, stored, SCHEDULED |
-| T-SVC-12 | P1, P2, DR1; A1 booked DR1 at WHEN | Book A2 for DR1 at WHEN inside `pytest.raises(ValueError)` | `list_appointments() == [first]`; `find_appointment('A2') is None` | A different patient shows the conflict is about the practitioner (AC-04.1). The state check shows nothing partial was stored |
+| T-SVC-12 | P1, P2, DR1; A1 booked DR1 at WHEN | Book A2 for DR1 at WHEN inside `pytest.raises(ValueError)` | `list_appointments() == [first]`; `find_appointment('A2') is None`; `first.status is SCHEDULED` (added after Copilot critique) | A different patient shows the conflict is about the practitioner (AC-04.1). The state check shows nothing partial was stored |
 | T-SVC-14 | A1 booked DR1 at 09:00 | Book A2 for DR1 at 09:01 | A2 found; two stored | Boundary of the exact-time rule. It fails if conflict is widened to an invented duration rule (confirmed in J) |
 | T-SVC-15 | A1 booked | `cancel_appointment('A1')` | `list_appointments() == [booked]` with CANCELLED | Retained history means it is still listed, not deleted (AC-05.2) |
 | T-SVC-16 | A1 (DR1), A2 (DR2) booked | `cancel_appointment('A1')` | A1 CANCELLED, A2 SCHEDULED | Would fail if cancel changed the wrong or every appointment |
@@ -218,29 +218,72 @@ Behaviour to test: `AppointmentService.book_appointment` rejects a second SCHEDU
 Human-first test idea/categories: (1) Valid: DR2 at the same time → stored. (2) Invalid: DR1 again at the same time → `ValueError` and store unchanged. (3) Boundaries: one minute later is allowed; a cancelled booking does not block the slot; a different patient with the same practitioner still conflicts. Recorded as T-SVC-12, T-SVC-13, T-SVC-14 and T-SVC-17 before Copilot was used.
 Prompt and purpose: The handout Part F prompt, with the Requirement and Acceptance criterion fields filled in exactly as above. Purpose: compare Copilot's candidates with our human-first design.
 
-> **[TO DO, member running Copilot]** Paste the prompt into GitHub Copilot Chat with your own account. Then fill one entry below for each significant candidate it gives. Run any candidate you keep and record the real result. Do not fill these in until Copilot has actually been used.
+Copilot run by: Aditya Vungarala (u3321194), signed in with his own account. Tool: GitHub Copilot Chat. Context given: the prompt above plus `smartcare/services.py` and `smartcare/data_store.py` only (no test files and no record, so the candidates are independent of our design). Full output kept by the group.
 
-For each significant candidate, copy this entry as needed:
-- Copilot test idea/candidate: [complete]
-- What it claims to verify: [complete]
-- Requirement trace: [complete]
-- Assertion quality: [complete]
-- Human critique: [complete]
-- Decision: [Accept / Modify / Reject]
-- Reason: [complete]
-- Final test reference if accepted/modified: [link or not retained]
-- Actual verification result: [complete; do not claim an unrun test passed]
+How we checked the candidates: we copied all four into a temporary test file and ran them with our tests (T-SVC-12, 13, 14, 17) on the correct code (all passed). We then ran them against five temporary defects in `services.py`/`data_store.py`. The production code was restored after each run and the temporary file deleted. Full suite afterwards: 73 passed.
+
+| Temporary defect | Copilot candidates C1–C4 | Our tests |
+|---|---|---|
+| M1: booking returned but never stored | C2–C4 fail; **C1 still passes** | T-SVC-12, 13, 14, 17 fail |
+| M2: rejected booking stored anyway | **all pass** | T-SVC-12 fails |
+| M3: conflict widened to the same day | **all pass** | T-SVC-14 fails |
+| M4: cancelled booking still blocks the slot | **all pass** | T-SVC-17 fails |
+| M5: error message reworded, behaviour still correct | **C2 fails** (false alarm) | all pass |
+
+**C1: `test_book_appointment_allows_same_datetime_for_different_practitioner`**
+- Copilot test idea/candidate: Book PRAC001 and PRAC002 at the same datetime; `assert second.appointment_id == "APT002"`.
+- What it claims to verify: AC-04.2, another practitioner at the same time is allowed.
+- Requirement trace: FR-05 / AC-04.2. Correct.
+- Assertion quality: Weak. It only checks the ID of the returned object. It does not check that the booking was stored or is SCHEDULED.
+- Human critique: It passed under M1 (booking never stored), so it cannot detect the main failure for this criterion.
+- Decision: Modify
+- Reason: The strengthened form (exact store contents + SCHEDULED status) is our existing T-SVC-13, so we kept T-SVC-13 rather than adding a near-duplicate.
+- Final test reference if accepted/modified: `tests/test_services.py::test_different_practitioner_same_time_is_allowed` (T-SVC-13)
+- Actual verification result: C1 passed on correct code and **passed under M1**. T-SVC-13 failed under M1 and passed on correct code.
+
+**C2: `test_book_appointment_rejects_same_practitioner_same_datetime_conflict`**
+- Copilot test idea/candidate: Book PRAC001 at a datetime, then book it again at the same datetime; `pytest.raises(ValueError, match="Practitioner already has a SCHEDULED appointment at this time")`.
+- What it claims to verify: FR-05 / AC-04.1 conflict rejection.
+- Requirement trace: FR-05 / AC-04.1. Correct.
+- Assertion quality: Mixed. The exception type is correct, but (a) `match=` ties the test to the exact message text, which is not part of the public contract (only ValueError is), and (b) nothing checks state after rejection (NFR-01).
+- Human critique: It failed under M5 (harmless rewording), which is a false alarm, and passed under M2 (rejected booking stored), which is a missed defect.
+- Decision: Modify
+- Reason: Drop `match=` and assert the state afterwards. This is our T-SVC-12, which we also strengthened to check that the existing booking is still SCHEDULED with its original patient. Without those two lines, T-SVC-12 also passed a temporary defect where a rejected booking cancelled the existing appointment.
+- Final test reference if accepted/modified: `tests/test_services.py::test_same_practitioner_same_time_conflict_leaves_store_unchanged` (T-SVC-12)
+- Actual verification result: C2 failed under M5 and passed under M2. T-SVC-12 failed under M2, passed under M5, and passed on correct code.
+
+**C3: `test_book_appointment_treats_exact_datetime_equality_as_conflict`**
+- Copilot test idea/candidate: Two separate but equal `datetime(2026, 1, 15, 10, 0)` values; expect ValueError.
+- What it claims to verify: A "boundary" for the exactly-same-datetime rule.
+- Requirement trace: FR-05 / AC-04.1.
+- Assertion quality: Correct exception, but no state check.
+- Human critique: Not a boundary. Both datetimes are equal, so it is the same scenario as C2. The real edge is the nearest *different* time (one minute later), which must be allowed. It passed under M3 (conflict widened to the whole day), so it cannot detect a rule that is too broad.
+- Decision: Reject
+- Reason: Duplicate of C2, mislabelled as a boundary. Our T-SVC-14 (09:00 vs 09:01) tests the actual edge.
+- Final test reference if accepted/modified: Not retained (T-SVC-14 covers the boundary)
+- Actual verification result: C3 passed under M3. T-SVC-14 failed under M3 and passed on correct code.
+
+**C4: `test_same_datetime_conflict_rule_is_scoped_to_practitioner`**
+- Copilot test idea/candidate: The same setup as C1; `assert len(store.list_appointments()) == 2`.
+- What it claims to verify: The conflict is scoped to the practitioner (AC-04.2).
+- Requirement trace: FR-05 / AC-04.2.
+- Assertion quality: Weak. It checks a count only, not which appointments are stored or their status.
+- Human critique: The same scenario as C1 under a "boundary" label.
+- Decision: Reject
+- Reason: Duplicate of C1 / T-SVC-13, with a weaker assertion.
+- Final test reference if accepted/modified: Not retained
+- Actual verification result: Passed on correct code and under M2–M4. Failed under M1.
+
+**What Copilot missed:** none of the four candidates covers the SCHEDULED part of AC-04.1 (a cancelled booking must not block the slot). All four passed under M4. Our human-first T-SVC-17 covers it.
 
 Before accepting: traces to a requirement/criterion; can fail for the right reason; assertion checks required behaviour; no invented business rule; no unnecessary private implementation dependence. Reject/modify weak assertions, invented requirements, excessive mocking, duplicates, wrong exceptions, obsolete architecture and unnecessary dependencies.
 
 ## I Weak Copilot Test Reflection
 
-> **[TO DO after H]** Answer from the actual Copilot output. Things to look for: a candidate that only checks `pytest.raises` without checking the store afterwards, one that uses `is not None`, an invented duration or patient-conflict rule, or one that reads `store._appointments` directly.
-
-Which Copilot-generated test looked convincing but was weak? [response]
-Why was it weak? [response]
-How did you strengthen it? [response]
-Accepted / modified / rejected test decisions and evidence: [link actual decisions in H]
+Which Copilot-generated test looked convincing but was weak? C2, the conflict-rejection test. It used the right exception and even matched the exact error message, so it looked thorough.
+Why was it weak? It checked only that an exception was raised, not what happened to the data. It passed when the rejected booking was stored anyway (M2). Its `match=` on the message text made it fail when the message was reworded but the behaviour was still correct (M5). It was too loose about state and too strict about wording. C1 was similar: it passed even when the booking was never stored (M1).
+How did you strengthen it? We dropped the message match (only ValueError is in the contract) and asserted the state after the rejection: the store holds only the first appointment, A2 does not exist, and the first appointment is still SCHEDULED with patient P1. That is T-SVC-12, which fails under M2 and passes under M5. We applied the same fix to C1 (assert exact store contents and SCHEDULED status), which is T-SVC-13.
+Accepted / modified / rejected test decisions and evidence: See H. C1 Modify → T-SVC-13; C2 Modify → T-SVC-12; C3 Reject (duplicate of C2, not a real boundary; T-SVC-14 covers the edge); C4 Reject (duplicate of C1). No Copilot code was added as-is. Copilot also missed the cancelled-slot case entirely (T-SVC-17).
 
 ## J Regression Run
 
@@ -249,7 +292,7 @@ Run python -m pytest from project/. Retain all accumulated tests. Record the tes
 | Command | Working directory | Code SHA | Passed | Failed | Failure summary | Product defect / test defect / unresolved | Evidence and interpretation |
 |---|---|---|---|---|---|---|---|
 | `python3 -m pytest` (baseline) | `project/` | 1e9cc49 (main after Stage 6, PR #7) | 28 | 0 | None | None | Stage 6 baseline intact: 8 supplied + 20 Stage 6 tests. Python 3.14.3, pytest 8.3.5 |
-| `python3 -m pytest` (with Stage 7 tests) | `project/` | Branch `test/stage07-regression-suite` on top of 1e9cc49; **[add branch commit SHA]** | 73 | 0 | None | None | 8 supplied + 38 service (20 Stage 6 + 18 Stage 7 cases) + 27 domain cases. Production code unchanged |
+| `python3 -m pytest` (with Stage 7 tests) | `project/` | Branch `test/stage07-regression-suite`: ff62ddf, then the T-SVC-12 strengthening commit | 73 | 0 | None | None | 8 supplied + 38 service (20 Stage 6 + 18 Stage 7 cases) + 27 domain cases. Production code unchanged |
 | `python -m pytest` (integrated) | `project/` | **[main SHA after merging the Stage 7 PR]** | [complete] | [complete] | [complete] | [complete] | [Each member pulls main and records their own run] |
 
 Individual test runs and changed-order independence evidence:
@@ -259,7 +302,7 @@ Individual test runs and changed-order independence evidence:
 - Files in a different order: `python3 -m pytest tests/test_services.py tests/test_domain.py tests/test_starter.py` → 73 passed
 Optional tutor-led demonstration notes: Not used in class. As a private sanity check (not assessed), we temporarily changed `Appointment.cancel` to allow COMPLETED → CANCELLED. T-DOM-14 and the Stage 6 COMPLETED test failed. We also temporarily widened the conflict check to the same day, and T-SVC-14 failed. The code was restored and the full suite rerun: 73 passed.
 A meaningful test should detect a relevant incorrect result. Students do not have to perform the demonstration or submit failure/restoration evidence for assessment. The tutor restores the example and reruns its tests. This is not a Stage 8 fault activity.
-Requirement → test → failure/observation → diagnosis → change → verification: FR-05 AC-04.1 → T-SVC-14 → failed when the conflict rule was temporarily widened to "same day" → diagnosis: a product defect against the "exact time" criterion (the test was correct) → change reverted → full suite 73 passed. No real product or test defects were found in the Stage 6 code.
+Requirement → test → failure/observation → diagnosis → change → verification: FR-05 AC-04.1 / NFR-01 → Copilot candidate C2 → passed under M2 (rejected booking stored) and failed under M5 (message reworded) → diagnosis: test defect (weak state checks, brittle message match), not a product defect → modified into T-SVC-12 (no `match=`, state asserted, existing booking still SCHEDULED) → T-SVC-12 fails under M2, passes under M5; production code restored; full suite 73 passed. The same method showed T-SVC-14 catches M3 and T-SVC-17 catches M4.
 
 ## K What the Suite Still Does Not Prove
 

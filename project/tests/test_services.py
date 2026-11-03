@@ -351,6 +351,8 @@ def test_same_practitioner_same_time_conflict_leaves_store_unchanged():
         appointments.book_appointment('A2', 'P2', 'DR1', WHEN)
     assert store.list_appointments() == [first]
     assert store.find_appointment('A2') is None
+    assert first.status is AppointmentStatus.SCHEDULED
+    assert first.patient.patient_id == 'P1'
 
 
 def test_different_practitioner_same_time_is_allowed():

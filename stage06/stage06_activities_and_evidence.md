@@ -2,8 +2,8 @@
 
 Complete this one group record. Link actual issues, diffs, tests and reviews; avoid copying entire histories. Blank fields are intentional. Duplicate rows as needed. Use synthetic data only. Every member records their own meaningful contribution. Do not invent results, reviews or Copilot use.
 
-- Group/tutorial: [FILL tutorial day/time and group name]
-- Members, GitHub usernames and cohorts: Aditya Vungarala (u3321194, UG); Khuzaimah (Khuzaimah876, [FILL cohort]); Manit Mahajan (CEOOFINDIA, [FILL cohort])
+- Group/tutorial: Thursday 2pm tutorial, Group 4
+- Members, GitHub usernames and cohorts: Aditya Vungarala (u3321194, UG); Khuzaimah (Khuzaimah876, UG); Manit Mahajan (CEOOFINDIA, UG)
 - Repository URL: https://github.com/Khuzaimah876/st1-assignment-3
 - Starting SHA: 93c299639fddc887cb9be7e6663b0e5abad2be33 (baseline: `python3 -m pytest` in `project/` → 8 passed)
 
@@ -102,7 +102,7 @@ Create at least two focused issues. Add a linked practitioner-lookup issue or an
 - Merge outcome and SHA: Merged into main as 3695b8f4c6a435d8b3762dfea325c5d6abdf07a9
 - Significant Copilot assistance: Copilot used by the reviewer for the required review comparison (see H and I). Implementation drafted with help from an AI assistant and disclosed in the PR description.
 - Linked issue closure: #1 and #2 closed on merge
-- Each member updated main: u3321194 — pulled 3695b8f, 20 passed; [FILL Khuzaimah876]; [FILL CEOOFINDIA]
+- Each member updated main: u3321194 — pulled 3695b8f, 20 passed; Khuzaimah876 — pulled main at f5911be, 28 passed; CEOOFINDIA — pulled main at f5911be, 28 passed
 - Integrated verification after merge: `python3 -m pytest` in `project/` on main → 20 passed at 3695b8f4c6a435d8b3762dfea325c5d6abdf07a9
 
 ### PR #5
@@ -122,7 +122,7 @@ Create at least two focused issues. Add a linked practitioner-lookup issue or an
 - Merge outcome and SHA: Merged into main as f5911be02c79c1e05c98d2e838168fca573cb9da
 - Significant Copilot assistance: Copilot used by the reviewer for the required review comparison (see H and I). Implementation drafted with help from an AI assistant (Claude) and disclosed in the PR description.
 - Linked issue closure: #3 closed on merge
-- Each member updated main: u3321194 — pulled f5911be, 28 passed; [FILL Khuzaimah876]; [FILL CEOOFINDIA]
+- Each member updated main: u3321194 — pulled f5911be, 28 passed; Khuzaimah876 — pulled f5911be, 28 passed; CEOOFINDIA — pulled f5911be, 28 passed
 - Integrated verification after merge: `python3 -m pytest` in `project/` on main → 28 passed at f5911be02c79c1e05c98d2e838168fca573cb9da
 
 ## H Copilot collaboration record
@@ -184,7 +184,7 @@ Create at least two focused issues. Add a linked practitioner-lookup issue or an
 
 - Member: CEOOFINDIA (Manit Mahajan)
 - Implementation: Not applicable for Stage 6.
-- Testing: [FILL — e.g. pulled main and ran the suite: result]
+- Testing: Pulled main at f5911be and ran the full suite: 28 passed.
 - Review: Reviewed and approved PR #4 and PR #5 using the actual diff, with line comments before consulting Copilot.
 - Issue refinement: Not applicable.
 - Design and responsibility discussion: Review comments on domain-owned cancellation and store-owned validation.
@@ -193,7 +193,7 @@ Create at least two focused issues. Add a linked practitioner-lookup issue or an
 
 - Member: Khuzaimah876
 - Implementation: Not applicable for Stage 6 (Stage 7 owner).
-- Testing: [FILL — pulled main and ran the suite: result, or "not yet verified"]
+- Testing: Cloned the repository at f5911be and ran the full suite: 28 passed.
 - Review: Not applicable.
 - Issue refinement: Not applicable.
 - Design and responsibility discussion: Not applicable.
@@ -256,18 +256,18 @@ Update main, create a focused issue and branch, write code and tests, inspect th
 - Working directory: `project/`
 - Observed result: 28 passed (8 supplied + 20 Stage 6)
 - PR and another-member reviewer: PR #4 and PR #5, both reviewed and approved by CEOOFINDIA — https://github.com/Khuzaimah876/st1-assignment-3/pull/4, https://github.com/Khuzaimah876/st1-assignment-3/pull/5
-- Unresolved issue or none: [FILL — none, or note any teammate who has not yet verified main]
-- Stage 7 handover status: [ready for tutor checkpoint / unresolved work]
+- Unresolved issue or none: None
+- Stage 7 handover status: Ready for tutor checkpoint
 - Final submitted SHA if later than tested SHA: Evidence-only commits after f5911be update this record and README only; no code changed after the tested SHA.
 
-- [ ] Three Stage 6 service targets completed and checked.
-- [ ] Original supplied tests retained and passing.
-- [ ] At least two focused issues link requirements and acceptance criteria.
-- [ ] Feature work reviewed by another member using the actual diff.
-- [ ] Human-first review and required Copilot comparison recorded.
-- [ ] Feedback resolved and approval recorded before merge.
-- [ ] Everyone pulled main and integrated checks passed.
-- [ ] Required activities, quiz responses and contribution notes completed.
-- [ ] Only synthetic data included; confidential peer material kept out.
-- [ ] Tutor can trace a requirement through issue, code, tests, PR and checkpoint.
+- [x] Three Stage 6 service targets completed and checked.
+- [x] Original supplied tests retained and passing.
+- [x] At least two focused issues link requirements and acceptance criteria.
+- [x] Feature work reviewed by another member using the actual diff.
+- [x] Human-first review and required Copilot comparison recorded.
+- [x] Feedback resolved and approval recorded before merge.
+- [x] Everyone pulled main and integrated checks passed.
+- [x] Required activities, quiz responses and contribution notes completed.
+- [x] Only synthetic data included; confidential peer material kept out.
+- [x] Tutor can trace a requirement through issue, code, tests, PR and checkpoint.
 

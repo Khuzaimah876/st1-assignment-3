@@ -135,7 +135,7 @@ Arrange test data; act on one meaningful behaviour; assert the required observab
 | T-SVC-01 | Fresh store + PatientService | `register_patient('P1', 'Alice Example')` | `find_patient('P1') is patient`; `list_patients() == [patient]` | Proves storage through the workflow (AC-01.1), not just construction. `is` rules out a copy |
 | T-SVC-07 | Store with P1, DR1, DR2 | `book_appointment('A1','P1','DR1',WHEN)` | Found `is` booked; list `== [booked]`; SCHEDULED; participants `is` the registered objects | Covers every part of AC-03.1: registered participants, unique ID, stored, SCHEDULED |
 | T-SVC-12 | P1, P2, DR1; A1 booked DR1 at WHEN | Book A2 for DR1 at WHEN inside `pytest.raises(ValueError)` | `list_appointments() == [first]`; `find_appointment('A2') is None`; `first.status is SCHEDULED` (added after Copilot critique) | A different patient shows the conflict is about the practitioner (AC-04.1). The state check shows nothing partial was stored |
-| T-SVC-14 | A1 booked DR1 at 09:00 | Book A2 for DR1 at 09:01 | A2 found; two stored | Boundary of the exact-time rule. It fails if conflict is widened to an invented duration rule (confirmed in J) |
+| T-SVC-14 | A1 booked DR1 at 09:00 | Book A2 for DR1 at 09:01 | A2 found; `list_appointments() == [first, later]` (exact contents, changed after review) | Boundary of the exact-time rule. It fails if conflict is widened to an invented duration rule (confirmed in J) |
 | T-SVC-15 | A1 booked | `cancel_appointment('A1')` | `list_appointments() == [booked]` with CANCELLED | Retained history means it is still listed, not deleted (AC-05.2) |
 | T-SVC-16 | A1 (DR1), A2 (DR2) booked | `cancel_appointment('A1')` | A1 CANCELLED, A2 SCHEDULED | Would fail if cancel changed the wrong or every appointment |
 
@@ -292,8 +292,8 @@ Run python -m pytest from project/. Retain all accumulated tests. Record the tes
 | Command | Working directory | Code SHA | Passed | Failed | Failure summary | Product defect / test defect / unresolved | Evidence and interpretation |
 |---|---|---|---|---|---|---|---|
 | `python3 -m pytest` (baseline) | `project/` | 1e9cc49 (main after Stage 6, PR #7) | 28 | 0 | None | None | Stage 6 baseline intact: 8 supplied + 20 Stage 6 tests. Python 3.14.3, pytest 8.3.5 |
-| `python3 -m pytest` (with Stage 7 tests) | `project/` | Branch `test/stage07-regression-suite`: ff62ddf, then the T-SVC-12 strengthening commit | 73 | 0 | None | None | 8 supplied + 38 service (20 Stage 6 + 18 Stage 7 cases) + 27 domain cases. Production code unchanged |
-| `python -m pytest` (integrated) | `project/` | **[main SHA after merging the Stage 7 PR]** | [complete] | [complete] | [complete] | [complete] | [Each member pulls main and records their own run] |
+| `python3 -m pytest` (with Stage 7 tests) | `project/` | Branch `test/stage07-regression-suite`: ff62ddf → ba47d7b (T-SVC-12 strengthened) → 9e2f74c (T-SVC-14 fixed after review) | 73 | 0 | None | None | 8 supplied + 38 service (20 Stage 6 + 18 Stage 7 cases) + 27 domain cases. Production code unchanged |
+| `python3 -m pytest` (integrated) | `project/` | d8718e2 (main after merging PR #9) | 73 | 0 | None | None | Each member pulled main at d8718e2 and ran the suite: Khuzaimah 73 passed, Aditya 73 passed, Manit 73 passed (links in L) |
 
 Individual test runs and changed-order independence evidence:
 - `python3 -m pytest tests/test_domain.py::test_cancel_changes_status` → 1 passed
@@ -317,17 +317,18 @@ Use links rather than copying GitHub history. Continue the Stage 6 workflow; no 
 
 | Issue/task | Branch | PR | Reviewer | Key feedback | Outcome |
 |---|---|---|---|---|---|
-| https://github.com/Khuzaimah876/st1-assignment-3/issues/8 | `test/stage07-regression-suite` | [PR link] | [different member] | [complete] | [complete] |
+| https://github.com/Khuzaimah876/st1-assignment-3/issues/8 | `test/stage07-regression-suite` | https://github.com/Khuzaimah876/st1-assignment-3/pull/9 | CEOOFINDIA (Manit) | Manit ran the branch (73 passed) and requested changes: T-SVC-14 used a count-only assertion (`len(...) == 2`), the same weakness the record criticises in Copilot's C4. Aditya commented confirming the Copilot critique in H/I and ran 73 passed: https://github.com/Khuzaimah876/st1-assignment-3/pull/9#issuecomment-6594869829 | Fixed in 9e2f74c (`store.list_appointments() == [first, later]`, still catches the "same day" defect); Manit rechecked 9e2f74c (73 passed), resolved the thread and approved; merged as d8718e2; issue #8 closed |
+| Post-merge verification | `main` | PR #9 comments | All members | Each member pulled d8718e2 and ran the suite | Khuzaimah: https://github.com/Khuzaimah876/st1-assignment-3/pull/9#issuecomment-6595188222 · Aditya: https://github.com/Khuzaimah876/st1-assignment-3/pull/9#issuecomment-6595310165 · Manit: https://github.com/Khuzaimah876/st1-assignment-3/pull/9#issuecomment-6595343961 |
 
 ## M Contribution Evidence
 
 Record actual work in test design, implementation, review, traceability, diagnosis, necessary fixes and integration. Do not include confidential peer ratings.
 
-| Member | Actual contribution | Evidence link |
-|---|---|---|
-| Khuzaimah (Khuzaimah876) | [e.g. added test_domain.py and the Stage 7 service tests; drafted the traceability matrix; ran the regression and order checks; disclose AI assistance] | [commit/PR link] |
-| Aditya Vungarala (u3321194) | [complete] | [link] |
-| Manit Mahajan (CEOOFINDIA) | [complete] | [link] |
+| Member | Actual contribution                                                                                                                                                                                                                                                                                                                                 | Evidence link |
+|---|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---|
+| Khuzaimah (Khuzaimah876) | Stage 7 owner and PR author: created issue #8 and the branch; ran the baseline (28 passed at 1e9cc49); added test_domain.py and the Stage 7 service tests with the traceability record (drafted with AI help from Copilot, disclosed in PR #9); strengthened T-SVC-12 after the Copilot critique; fixed T-SVC-14 after Manit's review; merged PR #9 | ff62ddf, ba47d7b, 9e2f74c; https://github.com/Khuzaimah876/st1-assignment-3/pull/9 |
+| Aditya Vungarala (u3321194) | Ran the FR-05 GitHub Copilot test-design activity (section H) with services.py and data_store.py as context; reviewed and agreed the critique of the four candidates (C1/C2 modified into T-SVC-13/T-SVC-12, C3/C4 rejected); ran the branch locally (73 passed); reviewed this final evidence PR                                                   | https://github.com/Khuzaimah876/st1-assignment-3/pull/9#issuecomment-6594869829 |
+| Manit Mahajan (CEOOFINDIA) | Reviewer of PR #9: ran the branch locally (73 passed), checked tests against section B, found the count-only assertion in T-SVC-14 and requested changes; rechecked 9e2f74c (73 passed), resolved the thread and approved                                                                                                                           | Review on https://github.com/Khuzaimah876/st1-assignment-3/pull/9 |
 
 ## N Formative Questions
 
@@ -363,9 +364,9 @@ Every test must trace to a real requirement or contract and be able to fail for 
 
 ## O Stage Completion
 
-Tested Stage 7 main SHA: [complete after merge]
-Full-suite result: [complete after merge; expected 73 passed if nothing else changes]
+Tested Stage 7 main SHA: d8718e2 (merge of PR #9)
+Full-suite result: `python3 -m pytest` in `project/` → 73 passed (8 supplied + 38 service + 27 domain), confirmed by all three members on d8718e2
 Unresolved defects and effect on baseline: None found. Stage 9 `list_practitioner_appointments` and the console TODOs are intentionally incomplete and outside Stage 7.
-Clean working tree and integration evidence: [each member: `git status` clean on main + their pytest result]
+Clean working tree and integration evidence: each member pulled main at d8718e2 and ran 73 passed (post-merge comments on PR #9, linked in L). This record update is evidence-only; no code changed after d8718e2
 Stage 8 handover status: Same application, 73-test regression suite and this traceability matrix are handed over; no Stage 8 work done.
-All tutorial/formative responses and traceability/Copilot decisions complete: [confirm once H, I, L, M and O are filled]
+All tutorial/formative responses and traceability/Copilot decisions complete: Yes. Sections A–O complete; Copilot decisions in H/I; review and integration in L; contributions in M

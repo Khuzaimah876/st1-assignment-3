@@ -367,12 +367,12 @@ def test_different_practitioner_same_time_is_allowed():
 def test_same_practitioner_one_minute_later_is_allowed():
     """T-SVC-14 (AC-04.1 boundary): conflict needs the exact datetime."""
     store, _, _, appointments = make_services()
-    appointments.book_appointment('A1', 'P1', 'DR1', WHEN)
+    first = appointments.book_appointment('A1', 'P1', 'DR1', WHEN)
     later = appointments.book_appointment(
         'A2', 'P1', 'DR1', datetime(2026, 10, 1, 9, 1),
     )
     assert appointments.find_appointment('A2') is later
-    assert len(store.list_appointments()) == 2
+    assert store.list_appointments() == [first, later]
 
 
 # ---------- FR-06 / FR-07 cancellation and retained history ----------

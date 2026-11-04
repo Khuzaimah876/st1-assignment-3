@@ -6,7 +6,7 @@ All Assignment 3 stage materials are provided from the beginning. Complete this 
 
 Group/tutorial: Thursday 2:30–4:30pm tutorial, Group 6
 Members and UG/PG cohorts: Aditya Vungarala (u3321194, UG); Khuzaimah (Khuzaimah876, UG); Manit Mahajan (CEOOFINDIA, UG)
-Record owner / contribution links for each member: [complete]
+Record owner / contribution links for each member: Record maintained by Khuzaimah (sections A.1–A.4, A.6, K; final I and L) and Aditya (B–H via commits on debug/stage08). Contributions: see I. PR: https://github.com/Khuzaimah876/st1-assignment-3/pull/14
 
 Use concise results and accessible artefact links rather than copying entire logs. Keep human-first entries before consulting GitHub Copilot. Link shared evidence once; do not repeat it across sections. No entries below are specimen answers or claimed results.
 
@@ -185,14 +185,14 @@ Result — accepted, revised or rejected / reason / behaviour-preservation concl
 
 ## I. Git, human review and integration
 
-Issues for both defects / refactor scope and owners: [complete]
-Branch / prepared, repair and refactor checkpoints: [link B/C/D/H]
-PR link and another member's reviewer identity: [complete]
-Key human feedback, difference from Copilot findings and response/outcome: [complete]
-Actual review approval / merge evidence: [complete]
-Integrated code SHA and team pull/retest command / working directory / result: [complete]
-Evidence-only later SHA / explanation if different: [complete or not applicable]
-Each member's substantive contribution and artefact: [complete]
+Issues for both defects / refactor scope and owners: #12 F8-01 (https://github.com/Khuzaimah876/st1-assignment-3/issues/12) and #13 F8-02 (https://github.com/Khuzaimah876/st1-assignment-3/issues/13), owner Aditya; each holds the actual Copilot prompt and response. Refactor scope (one magic-string replacement in has_practitioner_conflict) stated in PR #14 and section H, owner Aditya. Both issues closed by the merge.
+Branch / prepared, repair and refactor checkpoints: `debug/stage08`. Prepared afbeb59 (B); human hypotheses 8544aea (E); failing regression tests ad22b26 (G); F8-01 repair fa656fb (C); F8-02 repair 9d45475 (D); refactor plan b3ae2ad and refactor 638f38c (H); review follow-up da1f109 (I).
+PR link and another member's reviewer identity: https://github.com/Khuzaimah876/st1-assignment-3/pull/14, opened by Aditya (u3321194); reviewer Manit Mahajan (CEOOFINDIA), who did not write the repairs.
+Key human feedback, difference from Copilot findings and response/outcome: Manit checked each change against the requirements (conflict rule vs FR-05/AC-04.1/AC-04.2; cancelled lookup and blank-ID check vs FR-07/FR-08; enum refactor as behaviour-preserving; coverage of the two regression tests) and reran the suite himself (75 passed). Comparing the PR diff with main (rather than with the faulty code) showed that fault preparation had also removed two docstrings, which tests cannot detect and Copilot never mentioned. Aditya restored them in da1f109 (behaviour unchanged, 75 passed) and replied on the PR. Copilot only reasoned about the failing behaviour; the human review looked at what main would actually receive.
+Actual review approval / merge evidence: Approval by CEOOFINDIA: https://github.com/Khuzaimah876/st1-assignment-3/pull/14#pullrequestreview-5764396265. Merged into main by Khuzaimah as merge commit f87e8b6 ("Merge pull request #14 from Khuzaimah876/debug/stage08").
+Integrated code SHA and team pull/retest command / working directory / result: f87e8b6. Each member ran `git checkout main && git pull`, then `python3 -m pytest -q` in `project/` and `git log --oneline -1`: Khuzaimah 75 passed at f87e8b6; Aditya 75 passed at f87e8b6; Manit 75 passed at f87e8b6.
+Evidence-only later SHA / explanation if different: The commit that completes sections I, J and L is record-only (stage08 file); project code stays identical to f87e8b6.
+Each member's substantive contribution and artefact: **Aditya** — ran the staff preparation with the tutor (afbeb59), wrote the human-first hypotheses (8544aea), ran both Copilot prompts and the evidence checks (issues #12/#13, section F), added the failing regression tests (ad22b26), made both repairs (fa656fb, 9d45475), the refactor (638f38c) and the review follow-up (da1f109), opened PR #14. **Manit** — independent human review and approval of PR #14 with his own 75-passed rerun; post-merge retest. **Khuzaimah** — tutorial A.1–A.4/A.6 and K (PR #11), coordination of the workflow and record, merged PR #14 (f87e8b6), post-merge retest, final record (I, L).
 
 ## J. Required reflections
 
@@ -244,18 +244,18 @@ Response: Diagnose before you fix: reproduce, check the requirement, test a hypo
 
 ## L. Completion and handover
 
-- [ ] Existing project, earlier tests and stage records preserved.
-- [ ] Passing Stage 7 SHA and safe preparation details recorded.
-- [ ] Both defects reproduced with meaningful failing tests.
-- [ ] Both human hypotheses recorded before Copilot; actual suggestions evaluated with evidence.
-- [ ] Supported causes and minimal repairs explained; focused and full regression results recorded.
-- [ ] One genuine refactor verified under passing before/after tests.
-- [ ] Human PR review, feedback resolution and integrated retest recorded.
+- [x] Existing project, earlier tests and stage records preserved.
+- [x] Passing Stage 7 SHA and safe preparation details recorded.
+- [x] Both defects reproduced with meaningful failing tests.
+- [x] Both human hypotheses recorded before Copilot; actual suggestions evaluated with evidence.
+- [x] Supported causes and minimal repairs explained; focused and full regression results recorded.
+- [x] One genuine refactor verified under passing before/after tests.
+- [x] Human PR review, feedback resolution and integrated retest recorded.
 - [ ] Tutorial, three reflections and ten formative responses complete.
-- [ ] Local recovery metadata excluded from submitted source.
-- [ ] Same project and full suite ready for Stage 9 after Stage 8 integration, verification and recording.
+- [x] Local recovery metadata excluded from submitted source.
+- [x] Same project and full suite ready for Stage 9 after Stage 8 integration, verification and recording.
 
 Verified integrated code SHA / result: see I.
-Submitted SHA and evidence-only difference if any: [complete]
-Unresolved issues or incomplete checks / owner / next action: [complete]
-Handover note: [complete]
+Submitted SHA and evidence-only difference if any: Code as integrated at f87e8b6; the later record-only commit for I/J/L changes only this file.
+Unresolved issues or incomplete checks / owner / next action: Section J reflections and the "Tutorial, three reflections…" checkbox — owner: group, next action: write J in our own words and tick the box. Sections A and K were drafted with AI help and should be reworded in our own words before submission (owner Khuzaimah). Staff tool and project/.stage8_faults/ remain outside Git.
+Handover note: Stage 8 integrated at f87e8b6 with 75 passing tests (73 earlier + 2 regression tests in project/tests/test_regressions.py). Both defects are repaired and protected by regression tests; the refactor is verified. Stage 9 starts from main; `list_practitioner_appointments` in services.py is still the Stage 9 NotImplementedError stub.

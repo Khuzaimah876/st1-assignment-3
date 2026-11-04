@@ -196,9 +196,9 @@ Each member's substantive contribution and artefact: **Aditya** — ran the staf
 
 ## J. Required reflections
 
-1. Which Copilot diagnosis appeared convincing but lacked evidence? [complete; report honestly if none and discuss the least-supported real suggestion]
-2. What evidence changed your group's view? [complete]
-3. How did regression tests protect the refactoring? [complete]
+1. Which Copilot diagnosis appeared convincing but lacked evidence? (Aditya) The diagnosis that seemed most convincing at first was Copilot’s suggestion that the conflict check might be comparing the patient ID instead of the practitioner ID. It sounded plausible because the behaviour was reversed, but there was no evidence for it. When I checked line 127 of `data_store.py`, the code only used `appointment.practitioner.practitioner_id`, so the diagnosis was not supported by the actual implementation.
+2. What evidence changed your group's view? (Aditya) The most useful check was calling `store.has_practitioner_conflict()` directly instead of going through `services.py`. The results showed DR1 returned `False` and DR2 returned `True`, which proved the bug was already inside `data_store.py`. This ruled out the theory that `services.py` was passing the wrong practitioner ID, which was confirmed by lines 140–143 passing `practitioner.practitioner_id` correctly.
+3. How did regression tests protect the refactoring? (Aditya) The refactor changed `"scheduled"` to `AppointmentStatus.SCHEDULED`, but the tests behaved the same before and after the change. The suite passed with 75 tests before the refactor and still passed afterwards, with the two new regression tests also passing. This showed that the refactor only improved the code structure and did not change behaviour, because any break in the scheduled-appointment logic would have caused the existing and regression tests to fail.
 
 ## K. Ten formative questions
 
@@ -251,11 +251,11 @@ Response: Diagnose before you fix: reproduce, check the requirement, test a hypo
 - [x] Supported causes and minimal repairs explained; focused and full regression results recorded.
 - [x] One genuine refactor verified under passing before/after tests.
 - [x] Human PR review, feedback resolution and integrated retest recorded.
-- [ ] Tutorial, three reflections and ten formative responses complete.
+- [x] Tutorial, three reflections and ten formative responses complete.
 - [x] Local recovery metadata excluded from submitted source.
 - [x] Same project and full suite ready for Stage 9 after Stage 8 integration, verification and recording.
 
 Verified integrated code SHA / result: see I.
 Submitted SHA and evidence-only difference if any: Code as integrated at f87e8b6; the later record-only commit for I/J/L changes only this file.
-Unresolved issues or incomplete checks / owner / next action: Section J reflections and the "Tutorial, three reflections…" checkbox — owner: group, next action: write J in our own words and tick the box. Sections A and K were drafted with AI help and should be reworded in our own words before submission (owner Khuzaimah). Staff tool and project/.stage8_faults/ remain outside Git.
+Unresolved issues or incomplete checks / owner / next action: None for the code. Sections A and K were drafted with AI help and should be reworded in our own words before submission (owner Khuzaimah). Staff tool and project/.stage8_faults/ remain outside Git.
 Handover note: Stage 8 integrated at f87e8b6 with 75 passing tests (73 earlier + 2 regression tests in project/tests/test_regressions.py). Both defects are repaired and protected by regression tests; the refactor is verified. Stage 9 starts from main; `list_practitioner_appointments` in services.py is still the Stage 9 NotImplementedError stub.

@@ -71,7 +71,17 @@ Response and reason:
 ### A.5 Traceback and hypothesis ranking
 Using one actual failure, identify its exception/assertion, expected and observed values, test line, application call path and supporting requirement. List three plausible causes and rank them by fit with the available evidence. For each cause, name a check that could distinguish it from the others. Explain why a traceback alone does not establish the cause.
 
-Response and reason: [complete after running the prepared suite: needs an actual failure]
+Response and reason (actual failure from the prepared suite, F8-02):
+- **Exception / assertion:** `LookupError: Appointment not found` in tests/test_services.py::test_cancelled_appointment_is_still_retrievable.
+- **Expected vs observed:** expected `service.find_appointment('A1')` to return the same appointment with status CANCELLED; observed LookupError (the store returned None).
+- **Test line and call path:** test_services.py line 132 `found = service.find_appointment('A1')` → `AppointmentService.find_appointment` (services.py line 136 raises because `self.data_store.find_appointment('A1')` returned None) → `SmartCareDataStore.find_appointment`.
+- **Requirement:** FR-07 / AC-05.2 (cancelled history stays retrievable), BR-06/07 (cancel changes status, no delete), FR-08 (lookup by ID).
+- **Three plausible causes, ranked by fit:**
+  1. The store lookup filters out cancelled appointments. Best fit: the traceback ends where the service receives None from the store, and only cancelled appointments fail. *Check:* after cancelling, is A1 still in `list_appointments()` while `store.find_appointment('A1')` is None?
+  2. Cancellation removes A1 from the store. Fits the LookupError too. *Check:* count `list_appointments()` before and after cancel; search data_store.py/services.py for remove/del/pop.
+  3. Cancellation replaces the stored object (lookup searches for an object that is no longer there). Least likely. *Check:* read `Appointment.cancel()` and test whether the booked object itself becomes CANCELLED and stays listed.
+- **Outcome:** check 1 confirmed (A1 still listed, find returns None); checks 2 and 3 ruled out (count 1 → 1, no remove/del/pop, cancel() only sets `_status` on the same object). See D and F.
+- **Why a traceback alone does not establish the cause:** it shows *where* the failure was noticed (services.py line 136), not *why* the store returned None. Causes 1 and 2 produce the identical traceback; only runtime evidence (the list check) and reading the store code separated them.
 
 ### A.6 Exit question
 Why is changing code immediately after seeing a failure often a poor debugging strategy?
@@ -98,25 +108,25 @@ Traceback — exception/assertion; expected/observed values; test line; call pat
 
 ## C. F8-01 diagnosis and repair
 
-- Symptom / observed behaviour: [complete]
-- Expected behaviour and requirement: [complete]
-- Minimal synthetic reproduction steps: [complete]
-- Meaningful failing test path/name and exact relevant failure: [complete]
+- Symptom / observed behaviour: The practitioner conflict rule is reversed. Booking the same practitioner (DR1) again at the exact same time is accepted; booking a different practitioner (DR2) at that time is rejected with "ValueError: Practitioner already has a SCHEDULED appointment at this time".
+- Expected behaviour and requirement: FR-05 / AC-04.1: same practitioner + exact same datetime + existing SCHEDULED appointment → ValueError and nothing stored. AC-04.2: a different practitioner at the same time is allowed and stored.
+- Minimal synthetic reproduction steps: Fresh store; register P1, DR1, DR2; book A1 for P1/DR1 at 2026-10-01 09:00; then `store.has_practitioner_conflict('DR1', 09:00)` and `('DR2', 09:00)`; or book A2 for P1/DR1 and A3 for P1/DR2 at 09:00.
+- Meaningful failing test path/name and exact relevant failure: project/tests/test_regressions.py::test_f8_01_conflict_applies_only_to_same_practitioner → `assert False is True` at line 35 (`has_practitioner_conflict('DR1', WHEN)` returned False). Existing tests also failed: test_services.py T-SVC-12 (line 350, DID NOT RAISE ValueError), T-SVC-13 (line 362) and T-SVC-16 (line 393) (ValueError for DR2), test_starter.py::test_conflict_rule_and_different_practitioner (line 127, DID NOT RAISE).
 - Human hypothesis and intended checks: see E, F8-01.
-- Supported root cause and inspected code/runtime evidence: [complete after diagnosis]
-- Smallest justified fix / diff / why other behaviour is preserved: [complete]
-- Repair SHA / focused verification result: [complete]
+- Supported root cause and inspected code/runtime evidence: In `SmartCareDataStore.has_practitioner_conflict` (data_store.py), the practitioner condition was `appointment.practitioner.practitioner_id != practitioner_id`, so a conflict was reported only for *other* practitioners. Runtime: calling the store directly gave DR1 → False, DR2 → True. services.py passes `practitioner.practitioner_id` correctly (lines 140–143), so the fault is in the store, not the caller.
+- Smallest justified fix / diff / why other behaviour is preserved: One operator: `!=` → `==` on that line (`git diff`: 1 insertion, 1 deletion). The `exclude_appointment_id`, `date_time` and SCHEDULED conditions are unchanged, so exact-time-only conflicts, cancelled slots being free and the exclude option behave as before.
+- Repair SHA / focused verification result: fa656fb. `python3 -m pytest -q tests/test_regressions.py` in `project/` → 1 failed, 1 passed (F8-01 test now passes; F8-02 still failing as expected before its own repair).
 
 ## D. F8-02 diagnosis and repair
 
-- Symptom / observed behaviour: [complete]
-- Expected behaviour and requirement: [complete]
-- Minimal synthetic reproduction steps: [complete]
-- Meaningful failing test path/name and exact relevant failure: [complete]
+- Symptom / observed behaviour: After cancelling A1, `find_appointment('A1')` raises "LookupError: Appointment not found", although A1 is still in `list_appointments()`. Cancelling A1 a second time also raises LookupError instead of ValueError.
+- Expected behaviour and requirement: FR-07 / AC-05.2 and BR-06/07: cancellation only changes status to CANCELLED and keeps the appointment; it must still be listed and retrievable by ID (FR-08). A repeat cancel must raise ValueError and leave state unchanged.
+- Minimal synthetic reproduction steps: Fresh store; register P1 and DR1; book A1 at 2026-10-01 09:00; `cancel_appointment('A1')`; then compare `list_appointments()` with `store.find_appointment('A1')`.
+- Meaningful failing test path/name and exact relevant failure: project/tests/test_regressions.py::test_f8_02_cancelled_appointment_is_retained_and_retrievable → `assert None is <Appointment>` at line 55 (`store.find_appointment('A1')` returned None). Existing tests also failed: test_services.py::test_cancelled_appointment_is_still_retrievable (line 132) and test_repeated_cancel_raises_value_error_and_keeps_state (line 141), both LookupError from services.py line 136.
 - Human hypothesis and intended checks: see E, F8-02.
-- Supported root cause and inspected code/runtime evidence: [complete after diagnosis]
-- Smallest justified fix / diff / why other behaviour is preserved: [complete]
-- Repair SHA / focused verification result: [complete]
+- Supported root cause and inspected code/runtime evidence: `SmartCareDataStore.find_appointment` had an extra condition `and appointment.status.value != "cancelled"`, so it skipped stored cancelled appointments. Runtime: count before/after cancel 1 → 1; A1 still in the list with status cancelled; `store.find_appointment('A1')` → None. `grep` found no remove/del/pop; `Appointment.cancel()` only sets `_status` on the same object.
+- Smallest justified fix / diff / why other behaviour is preserved: Remove only the status condition so lookup matches by ID: `if appointment.appointment_id == appointment_id.strip():` (`git diff`: 1 insertion, 2 deletions). The blank/invalid-ID ValueError, the `.strip()`, the None-for-unknown-ID contract and the domain's repeat-cancel guard are unchanged.
+- Repair SHA / focused verification result: 9d45475. `python3 -m pytest -q tests/test_regressions.py` in `project/` → 2 passed.
 
 ## E. Human-first hypotheses
 
@@ -154,14 +164,14 @@ Final human conclusion and comparison with initial hypothesis: Root cause is the
 
 | Checkpoint | Code SHA or precise diff | Command and working directory | Actual result and artefact reference |
 |---|---|---|---|
-| F8-01 before repair | [complete] | [complete] | [complete] |
-| F8-01 after repair | [complete] | [complete] | [complete] |
-| F8-02 before repair | [complete] | [complete] | [complete] |
-| F8-02 after repair | [complete] | [complete] | [complete] |
-| Full suite after both repairs, before refactor | [complete] | [complete] | [complete] |
+| F8-01 before repair | ad22b26 (regression tests added on faulty code) | `python3 -m pytest -q tests/test_regressions.py` in `project/` | 2 failed; F8-01: `assert False is True` (line 35) |
+| F8-01 after repair | fa656fb (`!=` → `==` in has_practitioner_conflict) | same | 1 failed, 1 passed (F8-01 passes; F8-02 not yet repaired) |
+| F8-02 before repair | fa656fb (F8-02 filter still present) | same | F8-02: `assert None is <Appointment>` (line 55) |
+| F8-02 after repair | 9d45475 (status filter removed from find_appointment) | same | 2 passed |
+| Full suite after both repairs, before refactor | 9d45475 | `python3 -m pytest -q` in `project/` | 75 passed (73 earlier tests + 2 regression tests); previously 6 failed, 67 passed |
 
-Explain how the assertions detect each relevant incorrect result and protect previous behaviour: [complete]
-Unrelated failures investigated / resolution: [complete or not applicable with reason]
+Explain how the assertions detect each relevant incorrect result and protect previous behaviour: F8-01 asserts the store reports a conflict for DR1 and none for DR2 at the same time, that a second DR1 booking raises ValueError and leaves the list as `[first]`, and that DR2 is then stored — so either direction of the reversed rule fails, as does a fix that blocks everyone. F8-02 asserts the cancelled object stays as the only listed item, that both the store and the service return the *same* object (`is`), that its status is CANCELLED, and that a repeat cancel raises ValueError without changing state — so deleting, hiding, replacing or wrongly re-cancelling the appointment all fail. The 73 earlier tests still pass, protecting the rest of FR-01..FR-08.
+Unrelated failures investigated / resolution: Not applicable. All 6 initial failures were traced to F8-01 (4 tests) or F8-02 (2 tests) and all passed after the two repairs; no other failures appeared.
 
 ## H. Refactoring decision and before/after verification
 
@@ -169,9 +179,9 @@ Smell and exact location: Magic status string. `SmartCareDataStore.has_practitio
 Small proposed structural change / why justified: Replace that one comparison with `appointment.status is AppointmentStatus.SCHEDULED`. Written before editing (after both repairs, full suite 75 passed at 9d45475). Justified because the enum is the single source of truth for statuses (A.4 smell list); a typo in a string would fail silently, while a wrong enum name raises an error. One line, same file, no new architecture.
 External behaviour to preserve / relevant tests: Only SCHEDULED appointments for the same practitioner at the exact same time conflict; a cancelled slot is free; a different practitioner is allowed; `exclude_appointment_id` still works. Protected by test_regressions.py::test_f8_01_conflict_applies_only_to_same_practitioner, T-SVC-12, T-SVC-13, T-SVC-14 (exact datetime only), test_cancelled_slot_can_be_booked_again (cancelled slot is free), T-SVC-16 and the starter conflict test.
 Before result: see G, full passing suite.
-Actual change / diff / separate refactor SHA: [complete]
-Focused and full after-refactor commands / working directory / results / evidence: [complete]
-Result — accepted, revised or rejected / reason / behaviour-preservation conclusion: [complete]
+Actual change / diff / separate refactor SHA: 638f38c. One line in `has_practitioner_conflict`: `and appointment.status.value == "scheduled"):` → `and appointment.status is AppointmentStatus.SCHEDULED):` (`git diff`: 1 insertion, 1 deletion). Plan committed first in b3ae2ad.
+Focused and full after-refactor commands / working directory / results / evidence: In `project/`: `python3 -m pytest -q tests/test_regressions.py` → 2 passed; `python3 -m pytest -q` → 75 passed (same as before the refactor).
+Result — accepted, revised or rejected / reason / behaviour-preservation conclusion: Accepted. The same 75 tests pass before and after, including every conflict-rule test, so external behaviour is preserved; the code now uses the project's status enum consistently.
 
 ## I. Git, human review and integration
 

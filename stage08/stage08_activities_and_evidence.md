@@ -165,9 +165,9 @@ Unrelated failures investigated / resolution: [complete or not applicable with r
 
 ## H. Refactoring decision and before/after verification
 
-Smell and exact location: [complete]
-Small proposed structural change / why justified: [complete before editing]
-External behaviour to preserve / relevant tests: [complete]
+Smell and exact location: Magic status string. `SmartCareDataStore.has_practitioner_conflict` in project/smartcare/data_store.py (about line 111) checks `appointment.status.value == "scheduled"` instead of using the existing `AppointmentStatus` enum, which data_store.py already imports.
+Small proposed structural change / why justified: Replace that one comparison with `appointment.status is AppointmentStatus.SCHEDULED`. Written before editing (after both repairs, full suite 75 passed at 9d45475). Justified because the enum is the single source of truth for statuses (A.4 smell list); a typo in a string would fail silently, while a wrong enum name raises an error. One line, same file, no new architecture.
+External behaviour to preserve / relevant tests: Only SCHEDULED appointments for the same practitioner at the exact same time conflict; a cancelled slot is free; a different practitioner is allowed; `exclude_appointment_id` still works. Protected by test_regressions.py::test_f8_01_conflict_applies_only_to_same_practitioner, T-SVC-12, T-SVC-13, T-SVC-14 (exact datetime only), test_cancelled_slot_can_be_booked_again (cancelled slot is free), T-SVC-16 and the starter conflict test.
 Before result: see G, full passing suite.
 Actual change / diff / separate refactor SHA: [complete]
 Focused and full after-refactor commands / working directory / results / evidence: [complete]

@@ -123,14 +123,14 @@ Traceback — exception/assertion; expected/observed values; test line; call pat
 Complete both entries BEFORE Copilot. C/D supply observed/expected/reproduction/test; retain those initial facts and link them here.
 
 ### F8-01 human entry
-Likely cause and why plausible: [complete]
-Evidence intended to inspect / competing explanation / discriminating check: [complete]
-Member and saved sequence/time or commit showing this preceded consultation: [complete]
+Likely cause and why plausible: I think the `has_practitioner_conflict` method is checking practitioner IDs incorrectly, because the tests show the conflict rule is behaving in reverse. It allows the same practitioner at the same time but rejects a different practitioner at the same time.
+Evidence intended to inspect / competing explanation / discriminating check: I'd inspect `has_practitioner_conflict` in `data_store.py` and check how it compares practitioner IDs and appointment times. Other cause: `services.py` could be passing the wrong practitioner ID to the conflict check. Check: call `has_practitioner_conflict` directly with DR1 and then DR2 for the same appointment time and see which one returns `True`.
+Member and saved sequence/time or commit showing this preceded consultation: Aditya, written 4 Nov 2026 about 4:25pm AEDT, from the failing test output only (before opening data_store.py or using Copilot). Saved in the commit "Stage 8: human-first hypotheses for F8-01 and F8-02" on debug/stage08, before any Copilot prompt.
 
 ### F8-02 human entry
-Likely cause and why plausible: [complete]
-Evidence intended to inspect / competing explanation / discriminating check: [complete]
-Member and saved sequence/time or commit showing this preceded consultation: [complete]
+Likely cause and why plausible: I think `find_appointment` is ignoring cancelled appointments, because FR-07 says cancelling should only change the appointment status to CANCELLED, not remove it, but after cancellation the lookup cannot find A1.
+Evidence intended to inspect / competing explanation / discriminating check: I'd inspect `find_appointment` in `data_store.py` and check whether it filters out cancelled appointments. Other cause: the cancellation process may be removing A1 from the data store completely. Check: after cancelling A1, call `list_appointments()` and see whether A1 is still present; if it is, the lookup is wrong, and if it is not, the cancellation process removed it.
+Member and saved sequence/time or commit showing this preceded consultation: Aditya, written 4 Nov 2026 about 4:25pm AEDT, from the failing test output only (before opening data_store.py or using Copilot). Saved in the commit "Stage 8: human-first hypotheses for F8-01 and F8-02" on debug/stage08, before any Copilot prompt.
 
 ## F. GitHub Copilot prompts, findings and human decisions
 

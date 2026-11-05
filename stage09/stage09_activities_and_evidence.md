@@ -593,13 +593,13 @@ README run instructions and scope/limitations: Run instructions are in the proje
 Unresolved issues and support/action: Copilot's missing-test findings were rejected because the tests already existed. The optional console tests were deferred because they add little beyond existing coverage. The PR description's AI tool naming should be confirmed as corrected.
 UG common candidate / PG future branch plan: he common Stage 9 version is protected at 9d738a70ed57caba0996738d09a2149cd9aac334. UG work continues from this version, while PG members create separate feature branches from the same SHA. PG changes do not alter the common Stage 9 candidate.
 
-- [ ] Query contracts, purity, new lists and named-key ordering verified.
-- [ ] Service empty/unknown/invalid cases and cancellation history verified.
-- [ ] Every console command and invalid-input recovery demonstrated.
-- [ ] Query and workflow tests plus all previous tests pass; actual evidence linked.
-- [ ] Human design, Copilot critique, review and integration recorded honestly.
-- [ ] Reflections and ten formative responses completed.
-- [ ] README updated; earlier code/tests/records preserved.
-- [ ] Common SHA protected for UG Stage 12; PG Stage 10/11 work deferred until approved.
+- [x] Query contracts, purity, new lists and named-key ordering verified.
+- [x] Service empty/unknown/invalid cases and cancellation history verified.
+- [x] Every console command and invalid-input recovery demonstrated.
+- [x] Query and workflow tests plus all previous tests pass; actual evidence linked.
+- [x] Human design, Copilot critique, review and integration recorded honestly.
+- [x] Reflections and ten formative responses completed.
+- [x] README updated; earlier code/tests/records preserved.
+- [x] Common SHA protected for UG Stage 12; PG Stage 10/11 work deferred until approved.
 
 No persistence, rescheduling or assurance implementation is part of Stage 9. UG: 6→7→8→9→12. PG: 6→7→8→9→10→11→12. Mixed groups keep one repository and protect the common candidate.

@@ -10,6 +10,7 @@ from smartcare.domain import (
     Patient,
     Practitioner,
 )
+from smartcare.queries import select_appointments
 
 
 class PatientService:
@@ -152,10 +153,19 @@ class AppointmentService:
         practitioner_id: str,
         status: AppointmentStatus | None = None,
     ) -> list[Appointment]:
-        """Stage 9: new ordered list; default includes every status.
+        """Return a new ordered list; the default includes every status.
 
-        Unknown practitioner raises LookupError, invalid status
-        ValueError; a known practitioner with no matches returns an
-        empty list.
+        Unknown practitioner raises LookupError; a blank or invalid ID or
+        a status that is not an AppointmentStatus raises ValueError. A
+        known practitioner with no matches returns an empty list.
         """
-        raise NotImplementedError('Stage 9: practitioner appointments')
+        practitioner = self.data_store.find_practitioner(practitioner_id)
+        if practitioner is None:
+            raise LookupError('Practitioner not found')
+        if status is not None and not isinstance(status, AppointmentStatus):
+            raise ValueError('Status must be an AppointmentStatus or None')
+        return select_appointments(
+            self.data_store.list_appointments(),
+            practitioner.practitioner_id,
+            status,
+        )

@@ -1,20 +1,51 @@
-# SmartCare Stage 6 starter
+# SmartCare
 
-Requirements baseline: SmartCare A3 2026 revision 2. Python 3.13 and pytest 8.3.5 verified. Runtime uses only the standard library.
+A small in-memory appointment application for clinic staff, built for Software Technology 1 Assignment 3.
+Requirements baseline: SmartCare A3 2026 revision 2. Runtime uses only the Python standard library; the
+development dependency is pytest 8.3.5.
 
-From this directory, using a Python environment with the development dependency installed:
+## Run and test
+
+From this directory (`project/`), in the approved Python environment:
 
 ```sh
-python main.py
-python -m pytest
+python -m pip install -r requirements-dev.txt   # if needed
+python main.py                # supplied demonstration
+python main.py --interactive  # interactive menu
+python -m pytest -q           # full cumulative test suite
 ```
 
-If needed in your approved environment: `python -m pip install -r requirements-dev.txt`.
+## Interactive menu
 
-The demo registers synthetic records and books/finds an appointment. All supplied tests pass. Data exists only in this session and is lost on exit; FR-10 restart persistence is retired. Use synthetic information only.
+| Choice | Action |
+| --- | --- |
+| 1 / 2 | Register a patient (ID, name) / find a patient by ID |
+| 3 / 4 | Register a practitioner (ID, name, specialty) / find a practitioner by ID |
+| 5 | Book an appointment (appointment ID, patient ID, practitioner ID, date/time) |
+| 6 / 7 | Cancel an appointment by ID / find an appointment by ID |
+| 8 | List a practitioner's appointments; blank status = all, or `scheduled`, `cancelled`, `completed` |
+| 0 | Exit (session data is discarded) |
 
-`domain.py` contains the entities, status and guarded cancellation. `data_store.py` holds three dictionaries through add/find/list methods. The three services share that object. Supplied registration, booking, appointment lookup and conflict checking work. IDs are trimmed, non-blank and case-sensitive. Properties provide read-only identity/appointment state; changes go through domain methods. No special architecture terminology is required.
+Date/time must be exactly `YYYY-MM-DD HH:MM` (local time, minute precision). Invalid menu choices, blank or
+unknown IDs, duplicate registrations, unknown booking participants, malformed or impossible dates, unknown
+appointments, repeated cancellation and invalid statuses are reported and the menu continues; a rejected
+operation changes no stored record.
 
-Stage 6 TODOs: service patient/practitioner lookup and cancellation. Stage 9 TODOs: pure query, named sort key, service listing and interactive menu. The starter TODO contracts are in docstrings. All three Stage 6 TODO calls deliberately raise NotImplementedError; future TODOs remain stubs. No PG rescheduling or assurance solution is supplied.
+## Structure
 
-Service booking accepts IDs and a `datetime` (local, minute precision). Console parser accepts exactly `YYYY-MM-DD HH:MM`. Store lookups return None when absent; service lookups raise LookupError. Invalid values, duplicates, conflicts and illegal transitions raise ValueError. Lists are new containers holding the stored objects. No age, duration, patient-conflict or past-date rules apply.
+- `smartcare/domain.py`: `Patient`, `Practitioner`, `Appointment`, `AppointmentStatus`; validation and guarded cancellation.
+- `smartcare/data_store.py`: in-memory collections and lookups for one session.
+- `smartcare/services.py`: register/find/book/cancel and validated practitioner listing.
+- `smartcare/queries.py`: pure `appointment_sort_key` and `select_appointments` (explicit inputs, new sorted list, no side effects).
+- `smartcare/console.py`: prompts, parsing, display and recovery; calls the services only.
+- `main.py`: chooses the demo or the interactive menu.
+- `tests/`: starter, domain, services, regression, query and workflow tests (including console and subprocess tests).
+
+Cancelling an appointment changes its status to `CANCELLED`; the same object stays retrievable and listable in the session.
+
+## Scope and limitations
+
+- Data exists only in the running session and is lost on exit. Between-session persistence (FR-10) is retired and not implemented.
+- No authentication, patient-conflict, duration-overlap, past-date or clinic-hours rules are implemented.
+- Use synthetic data only; never enter real patient or personal information.
+- Stages 10 and 11 (PG) are not part of this common application.

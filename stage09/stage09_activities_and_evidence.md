@@ -111,6 +111,7 @@ Human design completed before AI: A1–A5 and B in this record (stage09_activiti
 Actual prompt/context supplied: Act as a code reviewer for SmartCare, an in-memory Python appointment app. Review the supplied `queries.py`, `services.py` and `tests/test_queries.py` (132 tests currently pass). Check query purity, validation, error handling, object identity, enum filtering, sorting, source non-mutation, component responsibilities, appointment history and missing tests. Confirm that queries return a new sorted list without modifying stored data, and that services raise the correct errors or return an empty list when appropriate. Identify any workflow, console or data integrity risks. Rank findings as Critical, Important or Optional, reference the relevant code and tests, and separate actual issues from optional improvements. Don't invent requirements, redesign the domain or introduce new frameworks.
 
 Actual response: 
+```text
 SmartCare Query and Console Integration Review
 
 Scope reviewed
@@ -537,6 +538,7 @@ Console test with actual completed appointments.
 Stability tests ensuring repeated listing operations never alter stored history.
 
 Overall, the implementation shown in the supplied files appears consistent with the stated contracts. The main gaps are not in the code reviewed, but in direct test coverage of purity, identity preservation and ordering edge cases.
+```
 
 | AI finding | Code/test evidence | Severity | Accept/Modify/Reject and reason | Change or no change | Actual verification |
 |---|---|---|---|---|---|

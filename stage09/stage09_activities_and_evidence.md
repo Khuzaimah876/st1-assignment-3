@@ -10,8 +10,8 @@ Stage 8 integrated SHA, command, working directory and actual result: f87e8b62e5
 
 ### A1 Session state classification
 
-| Information | Type | Why |
-|Information|Required session/domain or transient state?|Requirement or reason|
+| Information | Required session/domain or transient state? | Requirement or reason |
+|---|---|---|
 | Patient identity |Required session/domain state |FR-01/02 and BR-01: appointments must point at a real registered patient (BR-04) |
 | Appointment history |Required |FR-07/08 and BR-06/07: a cancelled appointment stays retrievable for the session. |
 | Temporary menu choice |Transient |It only drives one pass of the menu loop. No requirement needs it afterwards. |
@@ -86,8 +86,6 @@ Cover QRY-01–04, FP-01–03, UI-01–02 and relevant FR-01–09. Explain empty
 |QRY-04 known-empty |services.py list_practitioner_appointments |Known practitioner with no appointments, or no matching status, returns a new [] and no error (test_listing_known_practitioner_without_appointments_is_empty, test_listing_no_matching_status_is_empty_not_an_error) |PASSED: python -m pytest -q from project/ on main at 9d738a7 (132 passed in 0.26s) |https://github.com/Khuzaimah876/st1-assignment-3/blob/9d738a70ed57caba0996738d09a2149cd9aac334/project/tests/test_queries.py |
 |QRY-04 unknown and invalid |list_practitioner_appointments |Unknown ID raises LookupError; blank or non-text ID raises ValueError; a non-enum status such as 'scheduled' raises ValueError (test_listing_unknown_practitioner_raises_lookup_error, test_listing_blank_or_invalid_id_raises_value_error, test_listing_non_enum_status_raises_value_error) |PASSED: python -m pytest -q from project/ on main at 9d738a7 (132 passed in 0.26s) |https://github.com/Khuzaimah876/st1-assignment-3/blob/9d738a70ed57caba0996738d09a2149cd9aac334/project/tests/test_queries.py |
 |Retained history and identity |list_practitioner_appointments, store |After cancellation the default and CANCELLED lists include the same object, and the SCHEDULED list omits it. Padded IDs still match (test_listing_keeps_cancelled_history_for_default_and_cancelled, test_listing_returns_stored_objects_in_order, test_listing_trimmed_practitioner_id_still_finds_appointments) |PASSED: python -m pytest -q from project/ on main at 9d738a7 (132 passed in 0.26s) |https://github.com/Khuzaimah876/st1-assignment-3/blob/9d738a70ed57caba0996738d09a2149cd9aac334/project/tests/test_queries.py |
-
-
 |Rejection leaves state unchanged |list_practitioner_appointments |Records snapshotted before and after a failed request are equal (test_failed_listing_leaves_records_unchanged) |PASSED: python -m pytest -q from project/ on main at 9d738a7 (132 passed in 0.26s) |https://github.com/Khuzaimah876/st1-assignment-3/blob/9d738a70ed57caba0996738d09a2149cd9aac334/project/tests/test_queries.py |
 
 Include practitioner isolation, every enum status/default all, equal-time ID tie-break, named-key reuse, repeated calls, empty/already-sorted fresh lists, unchanged source order/fields, known-empty/unknown/invalid service cases and retained history.
@@ -107,7 +105,7 @@ Include registration/find, booking, conflict rejection, different-practitioner b
 
 ## E. GitHub Copilot review and human decisions
 
-Human design completed before AI: A1–A5 and B in this record (stage09_activities_and_evidence.md), completed before the Copilot session. Then run, tested and checked by me against the requirements; this is disclosed in the PR description.
+Human design completed before AI: A1–A5 and B in this record were completed before the Copilot session. The Stage 9 implementation and the draft record text were produced with Claude's help, then run, tested and checked by me against the requirements, as disclosed in the PR #17 description.
 Actual prompt/context supplied: Act as a code reviewer for SmartCare, an in-memory Python appointment app. Review the supplied `queries.py`, `services.py` and `tests/test_queries.py` (132 tests currently pass). Check query purity, validation, error handling, object identity, enum filtering, sorting, source non-mutation, component responsibilities, appointment history and missing tests. Confirm that queries return a new sorted list without modifying stored data, and that services raise the correct errors or return an empty list when appropriate. Identify any workflow, console or data integrity risks. Rank findings as Critical, Important or Optional, reference the relevant code and tests, and separate actual issues from optional improvements. Don't invent requirements, redesign the domain or introduce new frameworks.
 
 Actual response: 
@@ -543,22 +541,14 @@ Overall, the implementation shown in the supplied files appears consistent with 
 | AI finding | Code/test evidence | Severity | Accept/Modify/Reject and reason | Change or no change | Actual verification |
 |---|---|---|---|---|---|
 |Query purity and source order not tested |test_select_does_not_change_source_order_or_objects, test_select_unsorted_result_is_not_the_source_list |Important (Copilot) |Reject. These tests already exist. Copilot did not check test_queries.py. |No change. |Run python -m pytest tests/test_queries.py -v and record the result and commit SHA. |
-
 |Returned list is not a new list |test_select_returns_a_new_list_with_the_same_objects, test_select_returns_distinct_list_for_empty_input |Important (Copilot) |Reject. Tests already check that the returned list is different from the source. |No change. |Same test run. |
-
 |Returned object's identity not tested |test_select_returns_a_new_list_with_the_same_objects, test_listing_returns_stored_objects_in_order |Important (Copilot) |Reject. Both tests use is to check that the actual stored objects are returned. |No change. |Same test run. |
-
 |Equal time appointment sorting not tested |test_select_breaks_equal_times_by_appointment_id |Important (Copilot) |Reject. The test checks that appointments with equal times are sorted by ID (A1, A2, A3). |No change. |Same test run. |
-
 |Invalid status and unknown practitioner not tested |test_listing_non_enum_status_raises_value_error, test_listing_unknown_practitioner_raises_lookup_error |Important (Copilot) |Reject. Both cases already have dedicated tests. |No change. |Same test run. |
-
 |Empty query results not tested |test_select_status_with_no_matches_returns_new_empty_list, test_select_unmatched_practitioner_returns_empty_list |Important (Copilot) |Reject. Both empty result cases are already tested. |No change. |Same test run. |
-
 |Console test with a COMPLETED appointment |run_menu cannot create COMPLETED appointments through the menu. |Optional (Copilot) |Reject. The menu does not support creating completed appointments, so this is outside the current workflow. The status filtering is already covered elsewhere. |No change. |Deferred. |
-
 |Repeated console listing not tested |test_select_is_repeatable_for_unchanged_inputs |Optional (Copilot) |Reject. Query repeatability is already tested. A separate console test adds little value. |No change. |Deferred. |
-
-|Known practitioner with no appointments at console level |Console tests show "No matching appointments", but do not specifically test a practitioner with zero appointments. |Optional (Copilot) |Accept. This is a small coverage gap worth addressing to confirm the empty-result behaviour through the menu. |Add a console test for a registered practitioner with no appointments. |Run the relevant console test and record the result. |
+|Known practitioner with no appointments at console level |Console tests show "No matching appointments", but do not specifically test a practitioner with zero appointments. |Optional (Copilot) |Defer. Small coverage gap; the known-empty case is already tested at service level (test_listing_known_practitioner_without_appointments_is_empty), so a console test adds little. |No change. |Deferred. |
 
 
 
@@ -585,13 +575,13 @@ Responsibility check: explain how domain invariants, shared-store collections, s
 ## H. Review, completion and common handover
 
 Issues and bounded branches: Code was developed on feature/stage9-queries and merged through PR #16. This record is on docs/stage09-record
-PR/diff and another-member human reviewer: PR #16 was reviewed and approved by Aditya Vungarala on 5 November 2026, then merged by Khuzaimah876.
-Review responses and Copilot comparison: The human reviewer checked the actual implementation and provided feedback on the PR. Copilot mainly flagged missing tests, but its review had not included test_queries.py, where those tests already existed.
+PR/diff and another-member human reviewer: PR #16 (https://github.com/Khuzaimah876/st1-assignment-3/pull/16) was reviewed and approved by Aditya Vungarala (u3321194) on 5 November 2026, then merged by Khuzaimah876.
+Review responses and Copilot comparison: The human reviewer ran the tests (132 passed), used the interactive menu including invalid inputs, checked query purity and service errors, and deliberately broke the sort key and status filter to confirm the tests caught it (3 and 9 failures). He approved with no defects found. Copilot mainly flagged missing tests, but its review had not included test_queries.py, where those tests already existed.
 Integrated common Stage 9 SHA: 9d738a70ed57caba0996738d09a2149cd9aac334. This is the common version on main after merging PR #16.
-Full regression command, working directory, actual count/result and evidence: The full regression command was python -m pytest -q, run from project/. The result was 132 passed in 0.26s. The reviewer independently reported the same result.
+Full regression command, working directory, actual count/result and evidence: python -m pytest -q, run from project/ on main at 9d738a7 → 132 passed in 0.26s. The reviewer independently ran python3 -m pytest -q (Python 3.14.1) on the PR branch → 132 passed, and Khuzaimah876 ran it on main after the merge → 132 passed.
 README run instructions and scope/limitations: Run instructions are in the project README. The application still uses session-only data, case-sensitive IDs, strict YYYY-MM-DD HH:MM dates and has no patient-conflict rule.
 Unresolved issues and support/action: Copilot's missing-test findings were rejected because the tests already existed. The optional console tests were deferred because they add little beyond existing coverage. The PR description's AI tool naming should be confirmed as corrected.
-UG common candidate / PG future branch plan: he common Stage 9 version is protected at 9d738a70ed57caba0996738d09a2149cd9aac334. UG work continues from this version, while PG members create separate feature branches from the same SHA. PG changes do not alter the common Stage 9 candidate.
+UG common candidate / PG future branch plan: The common Stage 9 version is protected at 9d738a70ed57caba0996738d09a2149cd9aac334. UG work continues from this version, while PG members create separate feature branches from the same SHA. PG changes do not alter the common Stage 9 candidate.
 
 - [x] Query contracts, purity, new lists and named-key ordering verified.
 - [x] Service empty/unknown/invalid cases and cancellation history verified.

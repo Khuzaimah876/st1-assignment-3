@@ -2,18 +2,20 @@
 
 BLANK student response template. Supplied from the beginning in stage12/ in your EXISTING repository; complete it only when you reach Stage 12 after the previous applicable stage is integrated, verified and recorded; preserve project/, tests, earlier records and Git history. UG/common and PG/extended scope must be explicit. Use concise results and versioned links, not copied logs or source. No staff answers or fabricated approvals.
 
-Group/tutorial: [response]
-Members and UG/PG applicability: [response]
+Group/tutorial: Thursday 2:30–4:30pm tutorial, Group 6
+Members and UG/PG applicability: Aditya Vungarala (u3321194), Khuzaimah (Khuzaimah876), Manit Mahajan (CEOOFINDIA). All three are UG; PG scope not applicable.
+
 
 
 ## A Release scope and starting SHA
 
-Release label/version and requirements baseline: [response]
-Common starting SHA / branch / applicable members: [response]
-PG starting SHA / branch / applicable members or not applicable: [response]
-Working-state review and approved integration: [response]
-Protected common candidate and PG differences: [response]
-Feature freeze / owner / verifier: [response]
+Release label/version and requirements baseline: SmartCare v1.0 (course release), Assignment 3 revision 2 requirements, UG common scope (FR-01–FR-09, QRY-01–04, FP-01–03, UI requirements; FR-10 retired).
+Common starting SHA / branch / applicable members: 9ac14d8dd3816879a76161ae14678ce589e153e5 on main (application code unchanged since the Stage 9 merge 9d738a7); Stage 12 work on branch docs/stage12-release (issue #22); all three members (UG).
+PG starting SHA / branch / applicable members or not applicable: Not applicable; all members are UG.
+Working-state review and approved integration: git status --short was empty at 9ac14d8; all Stage 6–9 work is integrated through reviewed PRs; no outstanding approved work to integrate.
+Protected common candidate and PG differences: Common candidate is main at 9ac14d8; no PG extension.
+Feature freeze / owner / verifier: Feature freeze from 9ac14d8 (no new features; only reviewed fixes for genuine release blockers). Owner: Khuzaimah. Verifier: Aditya.
+
 
 
 ## B Requirements and release readiness matrix
@@ -42,7 +44,7 @@ Tutorial activity 2 and actual readiness matrix. Add exact requirement/acceptanc
 
 | Suite/scope | Environment/version | Working directory and command | Tested SHA | Actual result | Evidence link |
 |---|---|---|---|---|---|
-| Complete common | [response] | [response] | [response] | [response] | [response] |
+| Complete common | Python 3.13.1, pytest 8.3.5 (requirements-dev.txt) | `project/`: `python3 -m pytest -q` | 9ac14d8 | 132 passed | Issue #22 |
 | Complete PG if applicable | [response] | [response] | [response] | [response] | [response] |
 | Affected focused checks after correction | [response] | [response] | [response] | [response] | [response] |
 | Full integrated recheck | [response] | [response] | [response] | [response] | [response] |

@@ -286,8 +286,12 @@ One paragraph — If AI can write code why do we still need software engineers: 
 | Actual AI change rejected/modified or honestly accepted with verification | During F8-01, Copilot suggested using appt.practitioner_id, which did not match the actual code. Aditya checked the implementation, modified the suggestion by changing only the comparison operator in commit fa656fb, and verified the fix with tests. |
 | Unresolved limitation / future production work | Appointment data is stored in memory and is lost when the application closes. A production version would need persistent storage, user authentication and appointment-duration overlap checks. The README also documents that the current data is synthetic. |
 | Personal implementation contribution | Aditya worked on Stage 6 lookups and cancellation (PRs #4 and #5), followed by Stage 8 fixes and refactoring (PR #14, commit f87e8b6). Khuzaimah contributed to the domain and starter setup and Stage 7 tests (PR #9), while Manit developed the Stage 9 queries and console (PR #16). |
+| Personal test/review/design/integration contribution | Aditya checked the Stage 7 Copilot test-design suggestions, reviewed PRs #7, #10, #11, #15, #16 and #17, and performed the fresh-clone check. Khuzaimah handled merges and coordination and led the Stage 12 release work, while Manit reviewed PRs #4, #5, #6, #9 and #14. |
+| PG agentic change and rescheduling verification | Not applicable (UG) |
+| PG responsible-AI risk/remediation or supported no finding | Not applicable (UG) |
 
 Optional bounded-change practice only: validation rule, focused test, safe error-message change, explicit-input query or agreed status rule with test. Explain expected impact before editing, make a small change, run the test, and identify evidence to inspect if unsure. No live AI unless explicitly permitted. Preserve the submitted candidate.
 
 Practice question/change and reasoning: Not undertaken.
 Separate reflection / peer / common team viva evidence links and routing: Group reflection, confidential peer forms and Cadmus oral submitted separately through Canvas as directed by the tutor.
+No further coding stage. Later corrections use the published assessment process.

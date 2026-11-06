@@ -105,7 +105,7 @@ Include registration/find, booking, conflict rejection, different-practitioner b
 
 ## E. GitHub Copilot review and human decisions
 
-Human design completed before AI: A1–A5 and B in this record were completed before the Copilot session. The Stage 9 implementation and the draft record text were produced with Claude's help, then run, tested and checked by me against the requirements, as disclosed in the PR #17 description.
+Human design completed before AI: A1–A5 and B in this record were completed before the Copilot session. The Stage 9 implementation and the draft record text were produced with Copilot's help, then run, tested and checked by me against the requirements, as disclosed in the PR #17 description.
 Actual prompt/context supplied: Act as a code reviewer for SmartCare, an in-memory Python appointment app. Review the supplied `queries.py`, `services.py` and `tests/test_queries.py` (132 tests currently pass). Check query purity, validation, error handling, object identity, enum filtering, sorting, source non-mutation, component responsibilities, appointment history and missing tests. Confirm that queries return a new sorted list without modifying stored data, and that services raise the correct errors or return an empty list when appropriate. Identify any workflow, console or data integrity risks. Rank findings as Critical, Important or Optional, reference the relevant code and tests, and separate actual issues from optional improvements. Don't invent requirements, redesign the domain or introduce new frameworks.
 
 Actual response: 

@@ -218,25 +218,46 @@ Remaining administration or release dependency: [response]
 
 ## M Formative questions
 
-1. What is a release candidate? [response]
+1. What is a release candidate?    
 
-2. What is feature freeze and why is it used? [response]
+A release candidate is a specific version of the application that is ready for final testing before release. In our project, the candidate started from main at commit 9ac14d8 and was moved to the docs/stage12-release branch at 526c87f. Aditya cloned this version and independently ran the tests, with all 132 passing. This means we tested a specific commit rather than simply assuming the latest code was ready.
 
-3. What is regression testing in a release context? [response]
+2. What is feature freeze and why is it used? 
 
-4. What is a known limitation? [response]
+A feature freeze means no new features or major code changes are added before release. We froze the project at 9ac14d8. The only Stage 12 project change was updating the README with the Python version, AI-use information and v1.0 release label. Since no application code changed, the existing 132 test results remained valid.
 
-5. What is technical debt? [response]
+3. What is regression testing in a release context? 
 
-6. What are release notes? [response]
+Regression testing checks that existing features still work after changes are made. In SmartCare, we ran all 132 tests at 9ac14d8 and repeated them in Aditya's fresh clone. We also saw this during Stage 8, when tests F8-01 and F8-02 initially failed at ad22b26. After fixing the issues, the tests passed. These tests help make sure the same bugs do not return.
 
-7. What is software maintenance? [response]
+4. What is a known limitation? 
 
-8. What is the purpose of the individual demonstration/viva? [response]
+A known limitation is something the application cannot currently do or a restriction users should understand. SmartCare only stores information while the application is running. For example, after exiting and restarting, searching for patient P1 returned "Patient not found". Other limitations include no login system, no appointment-duration overlap checking and the use of synthetic data. These limitations are documented in the README so users understand what the application can and cannot do.
 
-9. What should the final responsible-AI check establish before release? [response]
+5. What is technical debt?
 
-10. What is the main course conclusion about AI and the role of the software engineer? [response]
+Technical debt refers to existing design choices or unfinished improvements that may make future development harder. In SmartCare, find_appointment searches through every appointment instead of using a direct lookup. Pytest's helper packages are also not pinned, and there are no GitHub issues tracking the Stage 8 refactor and Stage 9 work. These things do not stop the application from working, but addressing them would make future maintenance easier.
+
+6. What are release notes?
+
+Release notes explain what is included in a particular version of the software. Our Stage 12 release notes describe the main features, including registering patients and practitioners, booking, cancelling and listing appointments. They also mention the Stage 8 fixes for the F8-01 conflict bug and F8-02 lookup bug, along with the known limitations and AI-use information. This helps users and developers understand what changed and what to expect from the release.
+
+7. What is software maintenance? 
+
+Software maintenance means making changes to improve, correct or keep an application reliable after development. In our project, PRs #19–#21 involved correcting the Stage 8 merge record, fixing line numbers and correcting a typo. We followed the proper process by making changes on a branch, requesting review, merging the pull requests and having team members pull the updates instead of editing the main branch directly.
+
+
+8. What is the purpose of the individual demonstration/viva? 
+
+An individual viva is an oral assessment where each team member explains their own understanding of the project. Our Cadmus viva includes six questions covering requirements, architecture, debugging, Copilot judgement, testing and release. For example, we may need to explain why cancel() belongs in the domain object or how we identified and fixed the F8-01 conflict bug. This demonstrates that we understand the work rather than simply relying on the code or AI tools.
+
+9. What should the final responsible-AI check establish before release? 
+
+The final responsible-AI check should confirm that every significant AI contribution was understood, checked by a person against the requirements, code and tests, recorded so it can be traced, and contains no secrets, real data or unnecessary dependencies. This means AI suggestions should never be accepted automatically. In Stage 8, Copilot suggested using appt.practitioner_id, but that attribute did not match our actual code. Aditya modified the suggestion and changed only the operator in commit fa656fb. In Stage 9, Copilot reported that some query tests were missing, but Manit checked the test files, found that they already existed and rejected the finding. This shows why AI-generated suggestions must be checked against the actual code and test results.
+
+10. What is the main course conclusion about AI and the role of the software engineer?
+
+I learned that AI can help identify bugs and suggest solutions, but its suggestions are not always correct for the actual project. For example, Copilot identified the cause of the F8-01 issue but suggested code using an attribute that did not exist in our implementation. Aditya still had to investigate the problem, run the direct store check (DR1 → False), choose the smallest appropriate fix and verify it with tests. This showed us that developers must understand, review and take responsibility for the code, even when AI is used to help.
 
 
 ## N Reflection viva and handover

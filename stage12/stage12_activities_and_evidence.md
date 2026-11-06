@@ -152,9 +152,12 @@ PG assurance residual risks / owner / status or not applicable: Not applicable (
 
 | Requirement/claim | Reproduction/observation | Impact/severity | Owner/action | Corrective diff | Focused/full recheck | Residual limit |
 |---|---|---|---|---|---|---|
-| [response] | [response] | [response] | [response] | [response] | [response] | [response] |
-Justified no-change conclusion if no defect found: [response]
-Release blockers still open / status: [response]
+| README reproducibility (Stage 12 section 5) | At 9ac14d8, project/README.md had no Python version, AI-use summary or release label | Blocks a complete release README | Khuzaimah: add all three (issue #22) | f3491b0, 0f9a7bd, c34a7b6, 9609738, 526c87f (README only) | Fresh clone by Aditya at 526c87f: README commands worked, 132 passed | Teaching-supported Python version to be confirmed by tutor |
+| Student IDs in a public repository (assignment overview privacy rule) | Early commit emails contain student IDs; u3321194 is also Aditya's GitHub username in README and records | Privacy, medium | Team: raise with tutor; new commits use private noreply emails | None yet | Not applicable | Awaiting tutor guidance |
+Justified no-change conclusion if no defect found: No application defect found. 132 tests pass at 9ac14d8 and 526c87f, the section D demo showed every required behaviour, and the E review found only minor wording/style items recorded as debt in G. No application code changed in Stage 12.
+Release blockers still open / status: None for the application. README gap fixed and verified. Privacy question raised with tutor.
+
+
 
 
 ## I Git review and integration evidence
@@ -162,9 +165,9 @@ Release blockers still open / status: [response]
 Issue / PR / diff links and reviewed SHA: [response]
 Independent reviewer / feedback / response: [response]
 Integration commit / full recheck: [response]
-Tracked and untracked file inspection / cleanliness: [response]
-Secrets/staff material/caches/tool-metadata exclusion check: [response]
-Candidate recovery plan / known-good SHA: [response]
+Tracked and untracked file inspection / cleanliness: git ls-files on docs/stage12-release lists only .gitignore, the two READMEs, project/main.py, requirements-dev.txt, smartcare/ (6 files), tests/ (6 files) and the stage records. Stage 12 changed only project/README.md and the Stage 12 record. git status --short was empty in the fresh clone.
+Secrets/staff material/caches/tool-metadata exclusion check: No secrets, real data, staff tool (prepare_debugging.py), project/.stage8_faults/, caches, virtual environments or editor folders are tracked.
+Candidate recovery plan / known-good SHA: 9ac14d8 is a tested known-good commit (132 passed). Any later change can be reverted through a reviewed revert PR; history is not rewritten.
 Named substantive contributions: [response]
 
 

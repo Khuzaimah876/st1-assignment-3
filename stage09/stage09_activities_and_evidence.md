@@ -592,4 +592,4 @@ UG common candidate / PG future branch plan: The common Stage 9 version is prote
 - [x] README updated; earlier code/tests/records preserved.
 - [x] Common SHA protected for UG Stage 12; PG Stage 10/11 work deferred until approved.
 
-No persistence, rescheduling or assurance implementation is part of Stage 9. UG: 6→7→8→9→12. PG: 6→7→8→9→10→11→12. Mixed groups keep one repository and protect the common candidate.
+No persistence, rescheduling or assurancee implementation is part of Stage 9. UG: 6→7→8→9→12. PG: 6→7→8→9→10→11→12. Mixed groups keep one repository and protect the common candidate.

@@ -262,36 +262,32 @@ I learned that AI can help identify bugs and suggest solutions, but its suggesti
 
 ## N Reflection viva and handover
 
-Strongest evidence SmartCare is ready: [response]
-Weakest area: [response]
-How AI use changed from Stage 1 to Stage 12: [response]
-Start doing — engineering and AI use: [response]
-Stop doing — engineering and AI use: [response]
-Continue doing — engineering and AI use: [response]
-What worked / caused rework / future delivery improvement: [response]
-One paragraph — If AI can write code why do we still need software engineers: [response]
+Strongest evidence SmartCare is ready: The full set of 132 tests passed, and the results are linked to the requirements. Aditya cloned a clean copy of the repository and followed the README instructions to set it up, successfully running all 132 tests. My demonstration in Section D also showed that all the required features were functioning as expected.
+Weakest area: There is limited saved evidence of how AI was used during the earlier drafting stages (Stages 6-7). No GitHub issues were created to track the Stage 8 refactoring or the Stage 9 tasks. During Stages 6 and 8, some reviews were approved before the final commit was made and were only checked again afterwards. Several mistakes in the project records needed to be fixed later through PR #19.
+How AI use changed from Stage 1 to Stage 12: From the early stages, GitHub Copilot was mainly used to help write code and tests, and its suggestions were accepted more readily with little documentation saved. By Stage 8, the team started writing its own ideas before using Copilot, recording its prompts and responses in Issues #12 and #13, and reviewing each suggestion before accepting, changing or rejecting it. In Stage 9, the team checked Copilot’s claim about missing tests against the actual test files and rejected it. By Stage 12, all final AI-related decisions were documented in Section E.
+Start doing — engineering and AI use: Open a GitHub issue before starting each new task. Keep a record of AI prompts and responses whenever AI is used. Check the latest commit before approving a pull request.
+Stop doing — engineering and AI use: Approving pull requests before the final changes have been pushed. Making changes directly to the main branch, as happened in commit f0c7cbb. Copying information into project records without verifying details such as line numbers and who merged the changes.
+Continue doing — engineering and AI use: Develop our own hypotheses before asking AI for suggestions, as shown in commit 8544aea. Run tests first to identify failures before making fixes. Use request-changes reviews to catch problems, as done in PRs #9 and #17. Make sure everyone pulls the latest changes and shares their test results.
+What worked / caused rework / future delivery improvement: What worked: using branches, pull requests, reviews and merges helped keep changes organised, and regression testing helped identify bugs before release. What caused rework: the Stage 6 README and review gaps needed fixing in PR #7; the Stage 8 merge details and line numbers were corrected in PR #19; the A/K wording was revised in PR #20; and an incorrect AI tool was named in the records. Future improvement: verify all project records against GitHub before merging to make sure the information is accurate.
+One paragraph — If AI can write code why do we still need software engineers: We still need software engineers because AI-generated code is not always suitable for the actual project. In the F8-01 example, Copilot identified the cause of the problem but suggested code that did not match our implementation. A developer still needed to understand requirement FR-05, test the suggestion using the direct store check (DR1 returned False), choose the simplest suitable fix, confirm it worked through testing, review the changes and take responsibility for the final result.
 
 | Preparation item | Own explanation and evidence link |
 |---|---|
-| Problem and stakeholders | [response] |
-| Two requirements and acceptance criteria | [response] |
-| Domain model and architecture | [response] |
-| Design trade-off | [response] |
-| Meaningful test and its limits / 100 percent coverage | [response] |
-| Diagnosed defect and verification | [response] |
-| Shared store and session-state/query responsibilities | [response] |
-| What would break if session-state lookup/query responsibilities changed? | [response] |
-| Why cancellation is domain behaviour / conflict coordination is service behaviour | [response] |
-| FR-07 retained history test | [response] |
-| Actual AI change rejected/modified or honestly accepted with verification | [response] |
-| Unresolved limitation / future production work | [response] |
-| Personal implementation contribution | [response] |
-| Personal test/review/design/integration contribution | [response] |
-| PG agentic change and rescheduling verification | [response] |
-| PG responsible-AI risk/remediation or supported no finding | [response] |
+| Problem and stakeholders | SmartCare helps clinic staff manage patients, practitioners and appointments. Patients need appointments to be booked and cancelled correctly, while staff need reliable ways to register and look up records. |
+| Two requirements and acceptance criteria | FR-05 requires the system to prevent conflicting appointments, with AC-04.1 and AC-04.2 covering the conflict rules. FR-07 requires cancelled appointments to remain in the appointment history, as verified by AC-05.2. |
+| Domain model and architecture | The application separates domain logic, services, queries and the console interface. Appointment and patient data are managed through a shared store, while each layer has a separate responsibility. Evidence: Stage 9 architecture record. |
+| Design trade-off | We kept field validation in the domain objects, booking coordination in the services, and filtering and sorting in pure query functions. This separates business rules from retrieving and displaying data, although it means having more, smaller modules. Evidence: smartcare/domain.py, services.py and queries.py. |
+| Meaningful test and its limits / 100 percent coverage | The test_f8_02 test in test_regressions.py (line 46) checks the FR-07 retained-history requirement. Even 100% code coverage would only show that every line was executed, not that every requirement and possible input had been tested. |
+| Diagnosed defect and verification | The F8-01 conflict check used the wrong comparison operator. Aditya investigated the issue, changed the operator from != to == in commit fa656fb, and verified the correction through testing. |
+| Shared store and session-state/query responsibilities | The application uses one shared in-memory store during a session, allowing different menu actions to access the same appointment data. Query functions filter and sort appointments into new lists while keeping references to the original Appointment objects. Evidence: Stage 9 record. |
+| What would break if session-state lookup/query responsibilities changed? | Creating a new store for each menu action could cause previously entered appointments to disappear. If query functions changed the original records instead of returning filtered and sorted lists, they could also unintentionally affect the shared appointment data. |
+| Why cancellation is domain behaviour / conflict coordination is service behaviour | Cancellation is domain behaviour because it changes an appointment's status while preserving its history. Conflict checking belongs in the service because booking requires coordination between appointments and must enforce the booking rules before saving a new appointment. |
+| FR-07 retained history test | The test_f8_02 test and test_listing_keeps_cancelled_history_for_default_and_cancelled in test_queries.py verify that cancelled appointments remain in the appointment history and can be retrieved correctly. |
+| Actual AI change rejected/modified or honestly accepted with verification | During F8-01, Copilot suggested using appt.practitioner_id, which did not match the actual code. Aditya checked the implementation, modified the suggestion by changing only the comparison operator in commit fa656fb, and verified the fix with tests. |
+| Unresolved limitation / future production work | Appointment data is stored in memory and is lost when the application closes. A production version would need persistent storage, user authentication and appointment-duration overlap checks. The README also documents that the current data is synthetic. |
+| Personal implementation contribution | Aditya worked on Stage 6 lookups and cancellation (PRs #4 and #5), followed by Stage 8 fixes and refactoring (PR #14, commit f87e8b6). Khuzaimah contributed to the domain and starter setup and Stage 7 tests (PR #9), while Manit developed the Stage 9 queries and console (PR #16). |
 
 Optional bounded-change practice only: validation rule, focused test, safe error-message change, explicit-input query or agreed status rule with test. Explain expected impact before editing, make a small change, run the test, and identify evidence to inspect if unsure. No live AI unless explicitly permitted. Preserve the submitted candidate.
 
-Practice question/change and reasoning: [response or not undertaken]
-Separate reflection / peer / common team viva evidence links and routing: [response]
-No further coding stage. Later corrections use the published assessment process.
+Practice question/change and reasoning: Not undertaken.
+Separate reflection / peer / common team viva evidence links and routing: Group reflection, confidential peer forms and Cadmus oral submitted separately through Canvas as directed by the tutor.

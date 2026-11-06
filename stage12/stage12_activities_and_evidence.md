@@ -20,7 +20,7 @@ Feature freeze / owner / verifier: Feature freeze from 9ac14d8 (no new features;
 
 ## B Requirements and release readiness matrix
 
-Tutorial activity 1: All tests pass, README setup is incomplete, one dependency is unreviewed and a known limitation is undocumented. Decide Release / Release with conditions / Do not release and justify: . Passing tests shows that the tested features work, but it does not guarantee that another person can install and run the application, that its dependency is safe, or that users understand its limitations. Before approving the release, the README setup instructions must be completed, the dependency reviewed and the limitation clearly documented. The release can then be signed off.
+Tutorial activity 1: All tests pass, README setup is incomplete, one dependency is unreviewed and a known limitation is undocumented. Decide Release / Release with conditions / Do not release and justify: Release with conditions. Passing tests shows that the tested features work, but it does not guarantee that another person can install and run the application, that its dependency is safe, or that users understand its limitations. Before approving the release, the README setup instructions must be completed, the dependency reviewed and the limitation clearly documented. The release can then be signed off.
 Tutorial activity 2 and actual readiness matrix. Add exact requirement/acceptance IDs, evidence and reviewer; distinguish common/PG applicability.
 
 
@@ -185,10 +185,10 @@ Common decision / PG decision where different: Common decision only; PG not appl
 
 Exact common tested SHA: b4aa5c0fc72b06bdbe9b9792c1f1a02c3323305f (merge of PR #23); 132 passed. Application code unchanged since 9d738a7.
 Exact PG tested SHA or not applicable: Not applicable (UG).
-Final submitted SHA / repository URL: Final submitted SHA / repository URL: The merge commit of this final record PR on main (posted as a comment on that PR after merging) / https://github.com/Khuzaimah876/st1-assignment-3
-Evidence-only later commit and difference explanation: Evidence-only later commit and difference explanation: The final record PR after b4aa5c0 changes only this record and the root README group index; no code or tests change.
-Executable changes after testing and re-verification: Executable changes after testing and re-verification: None. git diff b4aa5c0 against the final SHA touches no files in project/smartcare, project/tests or project/main.py.
-Source ZIP name / SHA correspondence / extracted comparison: Source ZIP name / SHA correspondence / extracted comparison: SmartCare-release.zip, created with git archive from the final submitted SHA, extracted into a new folder and tested there; the result is posted as a comment on the final record PR.
+Final submitted SHA / repository URL: The merge commit of this final record PR on main (posted as a comment on that PR after merging) / https://github.com/Khuzaimah876/st1-assignment-3
+Evidence-only later commit and difference explanation: The final record PR after b4aa5c0 changes only this record and the root README group index; no code or tests change.
+Executable changes after testing and re-verification: None. git diff b4aa5c0 against the final SHA touches no files in project/smartcare, project/tests or project/main.py.
+Source ZIP name / SHA correspondence / extracted comparison: SmartCare-release.zip, created with git archive from the final submitted SHA, extracted into a new folder and tested there; the result is posted as a comment on the final record PR.
 
 
 ## L Submission package verification

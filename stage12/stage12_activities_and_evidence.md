@@ -20,8 +20,7 @@ Feature freeze / owner / verifier: Feature freeze from 9ac14d8 (no new features;
 
 ## B Requirements and release readiness matrix
 
-Tutorial activity 1: All tests pass, README setup is incomplete, one dependency is unreviewed and a known limitation is undocumented. Decide Release / Release with conditions / Do not release and justify: Release with conditions. Passing tests shows that the tested features work, but it does not guarantee that another person can install and run the application, that its dependency is safe, or that users understand its limitations. Before approving the release, the README setup instructions must be completed, the dependency reviewed and the limitation clearly documented. The release can then be signed off.
-Release is conditional. Passing tests shows that the tested features work, but it does not guarantee that another person can install and run the application, that its dependency is safe, or that users understand its limitations. Before approving the release, the README setup instructions must be completed, the dependency reviewed and the limitation clearly documented. The release can then be signed off.
+Tutorial activity 1: All tests pass, README setup is incomplete, one dependency is unreviewed and a known limitation is undocumented. Decide Release / Release with conditions / Do not release and justify: Release is conditional. Passing tests shows that the tested features work, but it does not guarantee that another person can install and run the application, that its dependency is safe, or that users understand its limitations. Before approving the release, the README setup instructions must be completed, the dependency reviewed and the limitation clearly documented. The release can then be signed off.
 Tutorial activity 2 and actual readiness matrix. Add exact requirement/acceptance IDs, evidence and reviewer; distinguish common/PG applicability.
 
 
@@ -47,11 +46,11 @@ Tutorial activity 2 and actual readiness matrix. Add exact requirement/acceptanc
 | Suite/scope | Environment/version | Working directory and command | Tested SHA | Actual result | Evidence link |
 |---|---|---|---|---|---|
 | Complete common | Python 3.13.1, pytest 8.3.5 (requirements-dev.txt) | `project/`: `python3 -m pytest -q` | 9ac14d8 | 132 passed | Issue #22 |
-| Complete PG if applicable | [response] | [response] | [response] | [response] | [response] |
-| Affected focused checks after correction | [response] | [response] | [response] | [response] | [response] |
-| Full integrated recheck | [response] | [response] | [response] | [response] | [response] |
-Prior assertions preserved / reviewed test diff: [response]
-Remaining failure / limitation: [response]
+| Complete PG if applicable | Not applicable (UG) | — | — | — | — |
+| Affected focused checks after correction | Fresh clone by Aditya, new virtual environment, Python 3.14.1, pytest 8.3.5 | `project/`: README commands, then `python -m pytest -q` | 526c87f (README-only correction) | 132 passed; README commands worked | Section F |
+| Full integrated recheck | Aditya (Python 3.14.1) and Khuzaimah (Python 3.13.1), pytest 8.3.5 | `project/`: `python3 -m pytest -q` after `git pull` on main | b4aa5c0 (merge of PR #23) | 132 passed | Pull comments on PR #23 |
+Prior assertions preserved / reviewed test diff: No test or application files changed in Stage 12; `git diff 9ac14d8 b4aa5c0 -- project/tests project/smartcare project/main.py` is empty. All 132 earlier assertions are preserved.
+Remaining failure / limitation: None. 132 passed at 9ac14d8, 526c87f and b4aa5c0. Scope limitations are listed in G.
 
 
 ## D Console and end to end demonstration
@@ -162,19 +161,19 @@ Release blockers still open / status: None for the application. README gap fixed
 
 ## I Git review and integration evidence
 
-Issue / PR / diff links and reviewed SHA: [response]
-Independent reviewer / feedback / response: [response]
-Integration commit / full recheck: [response]
+Issue / PR / diff links and reviewed SHA: Issue #22 (https://github.com/Khuzaimah876/st1-assignment-3/issues/22); PR #23 (https://github.com/Khuzaimah876/st1-assignment-3/pull/23), reviewed at f81295c; diff limited to project/README.md and this record.
+Independent reviewer / feedback / response: Aditya (u3321194) fetched f81295c, ran python3 -m pytest -q in project/ (132 passed), checked the README and sections B, D, F and J, and approved with no changes requested.
+Integration commit / full recheck: PR #23 merged by Khuzaimah as b4aa5c0. Members pulled main and ran python3 -m pytest -q in project/: 132 passed (comments on PR #23). This later record-only PR does not change code.
 Tracked and untracked file inspection / cleanliness: git ls-files on docs/stage12-release lists only .gitignore, the two READMEs, project/main.py, requirements-dev.txt, smartcare/ (6 files), tests/ (6 files) and the stage records. Stage 12 changed only project/README.md and the Stage 12 record. git status --short was empty in the fresh clone.
 Secrets/staff material/caches/tool-metadata exclusion check: No secrets, real data, staff tool (prepare_debugging.py), project/.stage8_faults/, caches, virtual environments or editor folders are tracked.
 Candidate recovery plan / known-good SHA: 9ac14d8 is a tested known-good commit (132 passed). Any later change can be reverted through a reviewed revert PR; history is not rewritten.
-Named substantive contributions: [response]
+Named substantive contributions: Khuzaimah: Stage 12 owner (issue #22, baseline, README fixes, console demo D, record sections A–N, PR #23 and merge). Aditya: fresh-clone verification (F), review and approval of PR #23, post-merge recheck. Manit: no Stage 12 work; his earlier contributions are listed in the N contribution rows.
 
 
 ## J Human release decision
 
 Decision - READY FOR COURSE RELEASE / READY WITH DOCUMENTED LIMITATIONS / NOT YET READY: READY WITH DOCUMENTED LIMITATIONS
-Approver / date / rationale and evidence: Khuzaimah, Aditya and Manit, 6 Nov 2026. All 132 tests pass (C), the console demo showed every required behaviour (D), the fresh clone by Aditya reproduced the README setup (F), and no application defect was found (H).
+Approver / date / rationale and evidence: Khuzaimah and Aditya, 6 Nov 2026. All 132 tests pass (C), the console demo showed every required behaviour (D), the fresh clone by Aditya reproduced the README setup (F), and no application defect was found (H).
 What risks remain / conditions / owners: Session-only data, no authentication and the other scope limits in G; pytest's own dependencies are unpinned; student-ID privacy question raised with the tutor (team). None blocks the course release.
 Can the team explain the system: Yes. Each member prepared the N table items and can explain their own contribution, the architecture, F8-01 and the AI decisions.
 Can a change be recovered: Yes. 9ac14d8 and the final release SHA are tested commits; any later change is reverted through a reviewed PR without rewriting history.
@@ -184,29 +183,29 @@ Common decision / PG decision where different: Common decision only; PG not appl
 
 ## K Final tested release SHA
 
-Exact common tested SHA: [response]
-Exact PG tested SHA or not applicable: [response]
-Final submitted SHA / repository URL: [response]
-Evidence-only later commit and difference explanation: [response]
-Executable changes after testing and re-verification: [response]
-Source ZIP name / SHA correspondence / extracted comparison: [response]
+Exact common tested SHA: b4aa5c0fc72b06bdbe9b9792c1f1a02c3323305f (merge of PR #23); 132 passed. Application code unchanged since 9d738a7.
+Exact PG tested SHA or not applicable: Not applicable (UG).
+Final submitted SHA / repository URL: Final submitted SHA / repository URL: The merge commit of this final record PR on main (posted as a comment on that PR after merging) / https://github.com/Khuzaimah876/st1-assignment-3
+Evidence-only later commit and difference explanation: Evidence-only later commit and difference explanation: The final record PR after b4aa5c0 changes only this record and the root README group index; no code or tests change.
+Executable changes after testing and re-verification: Executable changes after testing and re-verification: None. git diff b4aa5c0 against the final SHA touches no files in project/smartcare, project/tests or project/main.py.
+Source ZIP name / SHA correspondence / extracted comparison: Source ZIP name / SHA correspondence / extracted comparison: SmartCare-release.zip, created with git archive from the final submitted SHA, extracted into a new folder and tested there; the result is posted as a comment on the final record PR.
 
 
 ## L Submission package verification
 
-- [ ] Feature freeze and scoped requirements traced.
-- [ ] Applicable full regressions, integrated demo and invalid paths verified.
-- [ ] Architecture/code quality and final AI/dependency checks complete.
-- [ ] Root README and project/README reproduced by another verifier.
-- [ ] Release notes, technical debt and limitations visible.
-- [ ] Independent human review, integration and release decision recorded.
-- [ ] Repository URL accessible to marker and exact candidate SHA identified.
+- [x] Feature freeze and scoped requirements traced.
+- [x] Applicable full regressions, integrated demo and invalid paths verified.
+- [x] Architecture/code quality and final AI/dependency checks complete.
+- [x] Root README and project/README reproduced by another verifier.
+- [x] Release notes, technical debt and limitations visible.
+- [x] Independent human review, integration and release decision recorded.
+- [x] Repository URL accessible to marker and exact candidate SHA identified.
 - [ ] One source ZIP from submitted commit with root README.md and .gitignore.
 - [ ] project/ source and all accumulated applicable tests included.
-- [ ] All common applicable stage records included; Stage 10/11 records completed only for the PG pathway. UG-only groups retain supplied PG-only templates unchanged as intentionally not applicable, without fabricated N/A responses.
+- [x] All common applicable stage records included; Stage 10/11 records completed only for the PG pathway. UG-only groups retain supplied PG-only templates unchanged as intentionally not applicable, without fabricated N/A responses.
 - [ ] No .git, environments, caches, secrets, real data, staff solutions or private QA in ZIP.
 - [ ] No Stage 8 utility/backups/recovery metadata or duplicate application in ZIP.
-- [ ] Mixed-group common protection and candidate upload routing checked.
+- [x] Mixed-group common protection and candidate upload routing checked.
 - [ ] Group reflection, confidential individual peer forms and common team viva routed separately.
 
 Confirmed assessment item/upload route: Assignment 3 on Canvas, website URL submission of the repository; ZIP route to be confirmed with the tutor.

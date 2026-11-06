@@ -52,21 +52,21 @@ Classify these proposed changes as refactoring, repair or feature: rename appt t
 
 Response and reason:
 **Smells in the hypothetical 70-line method:**
-- *Long method doing several jobs* (validation, conflict checking, storing, printing): split into small, well-named steps.
-- *Duplicate magic status strings* (e.g. `'scheduled'`): use the existing `AppointmentStatus` enum.
-- *Direct collection manipulation* (editing a dict/list inside the service): go through the existing `SmartCareDataStore` add/find/list methods instead.
-- *Printing inside a service*: services should return objects or raise ValueError/LookupError; the console decides what to print.
-- *Four nested conditionals*: use guard clauses (raise early) and extract a helper such as a conflict check.
-- *Validation scattered in the service*: keep field validation in the domain constructors and store, as they already are.
+- **Long methods handling multiple responsibilities:** Break them into smaller, clearly named methods, with each method handling one specific task, such as validation, conflict checking, storing or returning results.
+- **Repeated status strings:** Avoid hardcoding status values such as `'scheduled'`. Use the existing `AppointmentStatus` enum instead.
+- **Direct collection manipulation:** Avoid directly modifying dictionaries or lists within the service. Use the existing `SmartCareDataStore` methods for adding, finding and listing records.
+- **Printing inside service methods:** Services should not print messages directly. They should return the relevant objects or raise appropriate exceptions, such as `ValueError` or `LookupError`. The console layer should handle all user-facing output.
+- **Deeply nested conditionals:** Replace multiple levels of nested `if` statements with guard clauses that handle errors early. Extract separate helper methods where appropriate, such as a method for checking appointment conflicts.
+- **Scattered validation logic:** Keep field validation within the existing domain constructors and data store rather than duplicating validation checks throughout the service.
 
 **Classification:**
 | Change | Type | Behaviour that must stay the same |
 |---|---|---|
-| Rename `appt` to `appointment` | Refactoring | Everything; it is only a name |
-| Extract a repeated conflict helper | Refactoring | Same practitioner + exact time + SCHEDULED is rejected; a different practitioner is allowed; a cancelled slot is free |
-| Add rescheduling | Feature | Not part of Stage 8 (new behaviour, PG Stage 10 only) |
-| Restore retained cancellation lookup | Repair | Fixes a broken requirement (FR-07 / AC-05.2), so behaviour is meant to change from wrong to right |
-| Replace a magic status string with the enum | Refactoring (if the string matched the enum value) | Same status comparisons and results; if the string was wrong, it would be a repair instead |
+| Rename `appt` to `appointment` | Refactoring | Renaming `appt` to `appointment` should not change anything because only the variable name is being updated. |
+| Extract a repeated conflict helper | Refactoring | The conflict-checking behaviour must remain unchanged: appointments with the same practitioner and exact time must be rejected if already scheduled, while different practitioners can use the same time and cancelled appointments should free up the slot. |
+| Add rescheduling | Feature | Rescheduling is a new feature and is not included in Stage 8. It should only be introduced in PG Stage 10. |
+| Restore retained cancellation lookup | Repair | Restoring the cancellation lookup corrects the existing broken requirement (FR-07 / AC-05.2), so the behaviour should change to meet the original requirement. |
+| Replace a magic status string with the enum | Refactoring (if the string matched the enum value) | Replacing the hardcoded status string with the existing enum should produce the same comparisons and results, provided the original string matches the enum value. |
 
 ### A.5 Traceback and hypothesis ranking
 Using one actual failure, identify its exception/assertion, expected and observed values, test line, application call path and supporting requirement. List three plausible causes and rank them by fit with the available evidence. For each cause, name a check that could distinguish it from the others. Explain why a traceback alone does not establish the cause.
@@ -86,7 +86,7 @@ Response and reason (actual failure from the prepared suite, F8-02):
 ### A.6 Exit question
 Why is changing code immediately after seeing a failure often a poor debugging strategy?
 
-Response and reason: Because the place a failure shows up is often not where it was caused. Editing straight away usually means guessing: you may hide the symptom (e.g. catching the exception or changing the test) while the real defect stays, or you may break other behaviour. Reproducing the failure, checking the requirement, forming a hypothesis and gathering evidence first leads to the smallest correct fix, and the failing test proves the fix worked.
+Response and reason: A failure does not always appear in the same place as the actual problem. Making changes straight away is often just guessing, which can hide the visible issue without fixing the real cause or introduce new problems elsewhere. It is better to reproduce the failure, check the requirement, develop a possible explanation and gather evidence before making any changes. This helps identify the smallest correct fix, while the previously failing test confirms that the problem has been resolved.
 
 
 Classification responses (1–5, each with reason): see A.1

@@ -81,22 +81,26 @@ PG demonstrations through service/tests or not applicable: Not applicable; UG gr
 
 | Review area | Code/evidence location | Finding or no finding | Correction/no change and recheck |
 |---|---|---|---|
-| OOP responsibilities and pure-query boundaries | [response] | [response] | [response] |
-| PascalCase and snake_case naming | [response] | [response] | [response] |
-| Useful type hints and meaningful docstrings | [response] | [response] | [response] |
-| Four-space indentation and imports/layout | [response] | [response] | [response] |
-| Focused methods / duplication / dead or commented code | [response] | [response] | [response] |
-| Globals / leakage / unnecessary inheritance or frameworks | [response] | [response] | [response] |
-| No SQLite/persistence/repository ABCs/speculative features | [response] | [response] | [response] |
-| Synthetic data / secrets / dependencies / provenance | [response] | [response] | [response] |
-| Significant common Copilot contributions and human verification | [response] | [response] | [response] |
-| PG plan/diff/test approvals and Stage 11 VERIFY/TRUST | [response] | [response] | [response] |
+| OOP responsibilities and pure-query boundaries | smartcare/domain.py, data_store.py, services.py, queries.py, console.py at 9ac14d8 | No finding: no print outside console.py; queries are module functions with explicit inputs | No change |
+| PascalCase and snake_case naming | All modules | No finding | No change |
+| Useful type hints and meaningful docstrings | All modules | Minor: has_practitioner_conflict docstring says the excluded ID "is ignored"; it means that appointment is skipped in the check | No change for release; recorded as debt in G |
+| Four-space indentation and imports/layout | All modules | Minor: one line in the conflict condition (data_store.py) is over 79 characters | No change; recorded as debt in G |
+| Focused methods / duplication / dead or commented code | data_store.py find_appointment | Minor: scans list_appointments() instead of a direct dictionary lookup (left from Stage 8 fault preparation); behaviour correct | No change; recorded as debt in G |
+| Globals / leakage / unnecessary inheritance or frameworks | console.py MENU_TEXT | No finding: one constant string; only Enum inheritance; standard library only | No change |
+| No SQLite/persistence/repository ABCs/speculative features | Whole project | No finding | No change |
+| Synthetic data / secrets / dependencies / provenance | requirements-dev.txt; git ls-files | No secrets or real data. pytest 8.3.5 (MIT, PyPI) pinned; its own dependencies (pluggy, packaging, iniconfig) are not pinned | No change; recorded in G |
+| Significant common Copilot contributions and human verification | Stage 6–9 records; issues #12/#13 | Copilot drafting and activity suggestions were checked by tests and human review; decisions recorded per stage | Each member confirms they understand the code they submitted |
+| PG plan/diff/test approvals and Stage 11 VERIFY/TRUST | — | Not applicable (UG) | — |
 
 | AI claim | Affected requirement/code | Human check | Accept/Modify/Reject and reason | Actual outcome/action or no change |
 |---|---|---|---|---|
-| [response] | [response] | [response] | [response] | [response] |
-Access route or approved equivalent / limitations: [response]
-Available AI evidence and missing evidence honestly disclosed: [response]
+| F8-01: has_practitioner_conflict uses != instead of == | FR-05 / data_store.py | Direct store call gave DR1 → False, DR2 → True; read the method | Modify: cause correct, but Copilot guessed the attribute as appt.practitioner_id | Operator-only fix (fa656fb) |
+| F8-01: services.py passes the wrong ID | FR-05 / services.py | Read the call (line 118); direct store call still wrong | Reject | No change |
+| F8-02: find_appointment filters out CANCELLED | FR-07 / data_store.py | A1 still listed but lookup returned None | Accept with modification: kept .strip() and blank-ID check | Status filter removed (9d45475) |
+| Stage 7: FR-05 test-design suggestions C3 and C4 | FR-05 tests | Ran against deliberately broken code | Reject; Copilot also missed the cancelled-slot case | T-SVC-12 strengthened (ba47d7b) |
+| Stage 9: query purity and source order not tested | QRY/FP tests | Searched test_queries.py | Reject: tests already existed; Copilot was not given test_queries.py | No change; 45 query tests pass |
+Access route or approved equivalent / limitations: GitHub Copilot Chat in VS Code. Tutor to confirm this is the approved route.
+Available AI evidence and missing evidence honestly disclosed: Copilot prompts and outputs are on issues #12/#13 and in the Stage 6–9 records. Early drafting help (PR #4, #5, #9, #11) was disclosed in PR descriptions, but the original suggestions were not saved. Copilot was used on 6 Nov to review the repository against the stage instructions and suggest record corrections (PR #19), and to draft parts of this Stage 12 record, which the team checked and reworded.
 
 
 ## F README and reproducibility check
@@ -120,20 +124,26 @@ Missing local file or setup gap / remedy and recheck: No missing files; no untra
 
 ## G Known limitations debt and release notes
 
-Delivered features: [response]
-Important fixes: [response]
-Architecture/quality improvements: [response]
-Known limitations: [response]
-AI-assisted development note: [response]
+Delivered features: Register and find patients and practitioners with validated, trimmed, case-sensitive unique IDs; booking for registered participants with the same-practitioner exact-time conflict rule; guarded cancellation that keeps the same appointment as CANCELLED and retrievable; appointment lookup; practitioner listing with optional status filter and date/time then ID ordering; interactive console with error recovery; runnable demo.
+Important fixes: Stage 8 F8-01 conflict check reversed (fa656fb); F8-02 cancelled appointments hidden from lookup (9d45475); docstrings removed by fault preparation restored (da1f109).
+Architecture/quality improvements: Stage 8 refactor replaced the "scheduled" string with AppointmentStatus.SCHEDULED (638f38c); Stage 9 added pure query functions and a console that calls only services; tests grew from 8 to 132.
+Known limitations: Session-only data, lost on exit; synthetic data only; local naive date/times at minute precision; no authentication or roles; no patient-conflict, duration-overlap, past-date or clinic-hours rules; no rescheduling (PG only).
+AI-assisted development note: GitHub Copilot helped draft some code and record text and was used for the required review, test-design and debugging activities; each suggestion was checked against requirements, code and test runs, and several were modified or rejected (see E). The team reviewed, tested and is responsible for all submitted work.
 
 | Debt item | Impact | Priority | Future action | Accepted? / release rationale |
 |---|---|---|---|---|
-| [response] | [response] | [response] | [response] | [response] |
-Session-only synthetic data and minute-precision local time: [response]
-Production auth/roles, portal, notifications, billing/insurance, clinical AI exclusions: [response]
-Scale/concurrency, timezone policy, operations/monitoring, accessibility/usability limitations: [response]
-Difference between accepted scope limit and unresolved required behaviour: [response]
-PG assurance residual risks / owner / status or not applicable: [response]
+| find_appointment scans all appointments instead of a dictionary lookup | Slower with many records; behaviour correct | Low | Restore a direct dictionary lookup, protected by existing tests | Yes: no requirement affected at course scale |
+| has_practitioner_conflict docstring wording ("is ignored") | Could mislead a maintainer | Low | Reword to "skipped in the check" | Yes |
+| Long line in the conflict condition | Readability | Low | Wrap the condition | Yes |
+| pytest's own dependencies not pinned | A later install could pull newer versions | Low | Add a lock file or pin pluggy/packaging/iniconfig | Yes: development-only, verified in a fresh clone |
+| No GitHub issues for the Stage 8 refactor and Stage 9 work | Weaker traceability | Low | Create an issue before each piece of work | Yes: recorded in Stage 8/9 records and PRs; issue #22 used for Stage 12 |
+| Student IDs in early commit emails and as a GitHub username in records | Privacy in a public repository | Medium | Private noreply emails now used for new commits | Raised with tutor |
+Session-only synthetic data and minute-precision local time: All records exist only while the program runs and are synthetic; date/times are local, timezone-naive and stored to the minute.
+Production auth/roles, portal, notifications, billing/insurance, clinical AI exclusions: Not provided and out of scope for this course release.
+Scale/concurrency, timezone policy, operations/monitoring, accessibility/usability limitations: Single user, single process; no timezone policy; no logging or monitoring; no usability or accessibility evaluation.
+Difference between accepted scope limit and unresolved required behaviour: The items above are deliberate scope limits. No current requirement is unmet: 132 tests pass and the section D demo showed every required behaviour.
+PG assurance residual risks / owner / status or not applicable: Not applicable (UG).
+
 
 
 ## H Release findings and corrective action

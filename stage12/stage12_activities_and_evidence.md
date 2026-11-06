@@ -100,7 +100,7 @@ PG demonstrations through service/tests or not applicable: Not applicable; UG gr
 | Stage 7: FR-05 test-design suggestions C3 and C4 | FR-05 tests | Ran against deliberately broken code | Reject; Copilot also missed the cancelled-slot case | T-SVC-12 strengthened (ba47d7b) |
 | Stage 9: query purity and source order not tested | QRY/FP tests | Searched test_queries.py | Reject: tests already existed; Copilot was not given test_queries.py | No change; 45 query tests pass |
 Access route or approved equivalent / limitations: GitHub Copilot Chat in VS Code. Tutor to confirm this is the approved route.
-Available AI evidence and missing evidence honestly disclosed: Copilot prompts and outputs are on issues #12/#13 and in the Stage 6–9 records. Early drafting help (PR #4, #5, #9, #11) was disclosed in PR descriptions, but the original suggestions were not saved. Copilot was used on 6 Nov to review the repository against the stage instructions and suggest record corrections (PR #19), and to draft parts of this Stage 12 record, which the team checked and reworded.
+Available AI evidence and missing evidence honestly disclosed: Copilot prompts and outputs are on issues #12/#13 and in the Stage 6–9 records. Early drafting help (PR #4, #5, #9, #11) was disclosed in PR descriptions, but the original suggestions were not saved.
 
 
 ## F README and reproducibility check

@@ -20,7 +20,7 @@ Feature freeze / owner / verifier: Feature freeze from 9ac14d8 (no new features;
 
 ## B Requirements and release readiness matrix
 
-Tutorial activity 1: All tests pass, README setup is incomplete, one dependency is unreviewed and a known limitation is undocumented. Decide Release / Release with conditions / Do not release and justify: Release is conditional. Passing tests shows that the tested features work, but it does not guarantee that another person can install and run the application, that its dependency is safe, or that users understand its limitations. Before approving the release, the README setup instructions must be completed, the dependency reviewed and the limitation clearly documented. The release can then be signed off.
+Tutorial activity 1: All tests pass, README setup is incomplete, one dependency is unreviewed and a known limitation is undocumented. Decide Release / Release with conditions / Do not release and justify: . Passing tests shows that the tested features work, but it does not guarantee that another person can install and run the application, that its dependency is safe, or that users understand its limitations. Before approving the release, the README setup instructions must be completed, the dependency reviewed and the limitation clearly documented. The release can then be signed off.
 Tutorial activity 2 and actual readiness matrix. Add exact requirement/acceptance IDs, evidence and reviewer; distinguish common/PG applicability.
 
 

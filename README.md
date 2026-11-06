@@ -8,11 +8,11 @@ Baseline: Stage 6 foundation, 2026 revision 2. This starter deliberately leaves 
 - Group and tutorial: Thursday 2:30–4:30pm tutorial, Group 6
 - Member names, GitHub usernames and UG/PG cohorts: Aditya Vungarala (u3321194, UG); Khuzaimah (Khuzaimah876, UG); Manit Mahajan (CEOOFINDIA, UG)
 - Shared repository URL: https://github.com/Khuzaimah876/st1-assignment-3
-- Latest completed stage: Stage 9 Queries and Console Integration
-- Verified code SHA: 9d738a70ed57caba0996738d09a2149cd9aac334 (merge of PR #16)
-- Test command, working directory and observed result: `python3 -m pytest -q` in `project/` → 132 passed (rerun on main at 7516950; code unchanged since 9d738a7)
-- Final submitted SHA, if different from tested code SHA: later commits are evidence-only (Stage 9 record, PR #17, merged as 7516950, and record/README corrections); no code changed after 9d738a7.
-- Unresolved work: none in the code for Stages 6–9. Stage 12 (UG release) not yet started.
+- Latest completed stage: Stage 12 Final Release (SmartCare v1.0, UG common scope)
+- Verified code SHA: b4aa5c0fc72b06bdbe9b9792c1f1a02c3323305f (merge of PR #23; application code unchanged since 9d738a7)
+- Test command, working directory and observed result: `python3 -m pytest -q` in `project/` → 132 passed at b4aa5c0
+- Final submitted SHA, if different from tested code SHA: the merge commit of the final Stage 12 record PR (evidence-only: Stage 12 record and this README); exact SHA posted on that PR
+- Unresolved work: none in the code. Tutor to confirm the ZIP upload route, supported Python version and student-ID privacy question.
 
 Do not put student IDs, private peer ratings, credentials or personal contact details here.
 

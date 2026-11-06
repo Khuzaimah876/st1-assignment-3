@@ -20,24 +20,26 @@ Feature freeze / owner / verifier: Feature freeze from 9ac14d8 (no new features;
 
 ## B Requirements and release readiness matrix
 
-Tutorial activity 1: All tests pass, README setup is incomplete, one dependency is unreviewed and a known limitation is undocumented. Decide Release / Release with conditions / Do not release and justify: [response]
-
+Tutorial activity 1: All tests pass, README setup is incomplete, one dependency is unreviewed and a known limitation is undocumented. Decide Release / Release with conditions / Do not release and justify: Release with conditions. Passing tests shows that the tested features work, but it does not guarantee that another person can install and run the application, that its dependency is safe, or that users understand its limitations. Before approving the release, the README setup instructions must be completed, the dependency reviewed and the limitation clearly documented. The release can then be signed off.
+Release is conditional. Passing tests shows that the tested features work, but it does not guarantee that another person can install and run the application, that its dependency is safe, or that users understand its limitations. Before approving the release, the README setup instructions must be completed, the dependency reviewed and the limitation clearly documented. The release can then be signed off.
 Tutorial activity 2 and actual readiness matrix. Add exact requirement/acceptance IDs, evidence and reviewer; distinguish common/PG applicability.
+
 
 | Release claim / requirement / scope | Evidence | Location/link and SHA | Reviewer | Sufficient? | Gap/action |
 |---|---|---|---|---|---|
-| Cancellation history works | [response] | [response] | [response] | [response] | [response] |
-| Architecture responsibilities are appropriate | [response] | [response] | [response] | [response] | [response] |
-| Rescheduling is safe — PG only | [response] | [response] | [response] | [response] | [response] |
-| AI use is responsible — common recheck / PG assurance | [response] | [response] | [response] | [response] | [response] |
-| System is maintainable | [response] | [response] | [response] | [response] | [response] |
-| FR-01–03 register/find and validation | [response] | [response] | [response] | [response] | [response] |
-| FR-04–05 booking/conflict rules | [response] | [response] | [response] | [response] | [response] |
-| FR-06–08 cancellation/history/find | [response] | [response] | [response] | [response] | [response] |
-| FR-09 and QRY/FP listing/filter/order/purity | [response] | [response] | [response] | [response] | [response] |
-| UI full console sequence and error recovery | [response] | [response] | [response] | [response] | [response] |
-| Session-only scope / FR-10 retired | [response] | [response] | [response] | [response] | [response] |
-| PG RES and assurance integration | [response] | [response] | [response] | [response] | [response] |
+| Cancellation history works | Tests assert the same object is still found (`is`), status CANCELLED, still listed under default and CANCELLED filters; repeated cancel rejected without change. Demo D showed it in the console | test_services.py::test_cancelled_appointment_is_still_retrievable (l.129), test_repeated_cancel_raises_value_error_and_keeps_state (l.137); test_regressions.py::test_f8_02 (l.46); test_queries.py::test_listing_keeps_cancelled_history_for_default_and_cancelled (l.367); at 9ac14d8 | Aditya | Yes, for the current session | None |
+| Architecture responsibilities are appropriate | Domain owns validation and cancel(); store holds session collections; services coordinate use cases and conflicts; pure queries; console only interacts | smartcare/*.py at 9ac14d8; section E; Stage 9 separation check on PR #16 | Aditya | Partly: code review, not a test | Recorded in E; minor debt in G |
+| Rescheduling is safe — PG only | Not applicable (UG group) | — | — | — | — |
+| AI use is responsible — common recheck / PG assurance | Copilot suggestions recorded with evidence checks and Accept/Modify/Reject decisions | Stage 6 record H/I; Stage 7 record H/I; Stage 8 record F, issues #12/#13; Stage 9 record E; section E | Aditya | Partly: early drafting help has less saved evidence than the review activities | Disclosed in E |
+| System is maintainable | 132 tests across 6 files; small focused modules; one refactor under passing tests (638f38c) | project/tests/ at 9ac14d8; Stage 8 record H | Aditya | Partly: tests and structure support it; no external measure | Debt items in G |
+| FR-01–03 register/find and validation | Valid, blank, duplicate, unknown, trimmed and case-sensitive ID tests; demo D rows 1–2 | test_domain.py, test_services.py, test_starter.py at 9ac14d8; section D | Aditya | Yes | None |
+| FR-04–05 booking/conflict rules | Same practitioner + exact time + SCHEDULED rejected; different practitioner allowed; cancelled slot free; failed booking stores nothing | test_starter.py::test_conflict_rule_and_different_practitioner (l.119); test_regressions.py::test_f8_01 (l.28); test_services.py T-SVC-12/13/16; section D | Aditya | Yes | None |
+| FR-06–08 cancellation/history/find | Guarded cancel; retained history; lookup returns the same object | test_domain.py::test_repeated_cancellation_is_rejected (l.168) and the cancellation row above; section D | Aditya | Yes | None |
+| FR-09 and QRY/FP listing/filter/order/purity | 45 query tests: default all statuses, explicit filters, empty vs unknown, date/time then ID order, new list without mutating the source | test_queries.py at 9ac14d8 (e.g. l.187, l.208); section D | Aditya | Yes | None |
+| UI full console sequence and error recovery | Workflow tests drive the menu and a real `main.py --interactive` subprocess; demo D | test_workflows.py::test_subprocess_interactive_session_end_to_end (l.322); section D | Aditya | Yes | None |
+| Session-only scope / FR-10 retired | A new process starts empty; README states data is lost on exit | test_workflows.py::test_subprocess_new_session_starts_empty (l.342); section D restart check; project/README.md | Aditya | Yes | None |
+| PG RES and assurance integration | Not applicable (UG group) | — | — | — | — |
+
 
 
 ## C Full regression results

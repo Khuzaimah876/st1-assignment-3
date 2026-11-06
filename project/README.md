@@ -54,5 +54,5 @@ Cancelling an appointment changes its status to `CANCELLED`; the same object sta
 ## AI use
 
 GitHub Copilot was used to assist with drafting some code and documentation, as well as the required review, test design and debugging activities. 
-It also helped review the repository against the stage instructions and prepare corrections to the records, including parts of the Stage 12 record. All suggestions were checked against the requirements, code and test results.
+.All suggestions were checked against the requirements, code and test results.
 Some were adjusted or rejected where necessary, as explained in the relevant stage records. The team reviewed and tested the work and takes responsibility for everything submitted.

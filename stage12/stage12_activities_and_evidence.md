@@ -54,24 +54,25 @@ Remaining failure / limitation: [response]
 
 | Demo step | Synthetic setup/input | Expected requirement | Observed result | Evidence/link |
 |---|---|---|---|---|
-| Problem and stakeholders | [response] | [response] | [response] | [response] |
-| Register and find Patient and two Practitioners | [response] | [response] | [response] | [response] |
-| Valid booking | [response] | [response] | [response] | [response] |
-| Same practitioner exact-time conflict rejected | [response] | [response] | [response] | [response] |
-| Different practitioner same time allowed | [response] | [response] | [response] | [response] |
-| Cancel SCHEDULED and retain/find CANCELLED object | [response] | [response] | [response] | [response] |
-| Invalid/repeated cancellation rejected | [response] | [response] | [response] | [response] |
-| Default all-status listing | [response] | [response] | [response] | [response] |
-| Explicit filtering / empty vs unknown / deterministic order | [response] | [response] | [response] | [response] |
-| Invalid date/status/menu/lookup recovery and continued operation | [response] | [response] | [response] | [response] |
-| Session-only limitation and normal exit | [response] | [response] | [response] | [response] |
-| One meaningful requirement-linked pytest test explained | [response] | [response] | [response] | [response] |
-| Architecture and one actual AI decision / known limitation | [response] | [response] | [response] | [response] |
-| PG reschedule identity/participants/time and no-op | [response] | [response] | [response] | [response] |
-| PG conflict/invalid status/failure non-mutation | [response] | [response] | [response] | [response] |
-| PG old slot / current lookup/list ordering / assurance risks | [response] | [response] | [response] | [response] |
-Stable demo owner / fresh process / command: [response]
-PG demonstrations through service/tests or not applicable: [response]
+| Problem and stakeholders | Clinic staff register patients and practitioners, book and cancel appointments, and look up or list them during one session | Overview purpose | Explained by Khuzaimah before the demo | project/README.md |
+| Register and find Patient and two Practitioners | 1: P1/Alex; 2: P1; 2: P9; 3: D1/Taylor/General practice; 3: D2/Sam/Dermatology; 4: D1 | FR-01–03; unknown lookup recovers | Registered and found P1, D1, D2; P9 gave "Error: Patient not found" and the menu continued | Demo run 6 Nov, branch docs/stage12-release (code as 9ac14d8) |
+| Valid booking | 5: A1/P1/D1/2026-12-01 09:00 | FR-04, AC-03.1 | "Booked: A1: P1 with D1, 2026-12-01 09:00, scheduled" | As above |
+| Same practitioner exact-time conflict rejected | 5: A2/P1/D1/2026-12-01 09:00; then 7: A2 | FR-05, AC-04.1; no partial appointment | "Error: Practitioner already has a SCHEDULED appointment at this time"; 7: A2 gave "Error: Appointment not found", so nothing was stored | As above |
+| Different practitioner same time allowed | 5: A3/P1/D2/2026-12-01 09:00 | AC-04.2 | "Booked: A3: P1 with D2, 2026-12-01 09:00, scheduled" | As above |
+| Cancel SCHEDULED and retain/find CANCELLED object | 6: A1; 7: A1 | FR-06/07, AC-05.1, AC-05.2, FR-08 | "Cancelled: A1 … cancelled"; 7: A1 returned "A1: P1 with D1, 2026-12-01 09:00, cancelled" | As above |
+| Invalid/repeated cancellation rejected | 6: A1 again; 6: A9 | AC-05.3 | "Error: Only SCHEDULED appointments may be cancelled"; A9 gave "Error: Appointment not found" | As above |
+| Default all-status listing | 8: D1, blank status | FR-09, QRY-02 | Listed "A1: P1 with D1, 2026-12-01 09:00, cancelled" (history retained) | As above |
+| Explicit filtering / empty vs unknown / deterministic order | 8: D1/scheduled; 8: D9/blank | QRY-02, QRY-04, QRY-03 | D1 scheduled: "No matching appointments."; unknown D9: "Error: Practitioner not found". Equal-time ordering is shown by test_select_breaks_equal_times_by_appointment_id (test_queries.py l.187) because the menu cannot create equal-time SCHEDULED bookings for one practitioner | As above; test_queries.py |
+| Invalid date/status/menu/lookup recovery and continued operation | 5: A4 with 2026-02-30 09:00; 8: D1/finished; menu x; accidental inputs "2\" and "A1\" | UI-02 | "Error: Invalid calendar date/time; use YYYY-MM-DD HH:MM"; "Error: Status must be scheduled, cancelled or completed (or blank for all)"; "Unknown choice 'x': enter 0-8."; the accidental inputs were also rejected; the menu continued every time | As above |
+| Session-only limitation and normal exit | 0; new process; 2: P1 | FR-10 retired, session-only | "Goodbye. Session data is discarded."; in the new process P1 gave "Error: Patient not found" | As above |
+| One meaningful requirement-linked pytest test explained | `python3 -m pytest -q tests/test_regressions.py::test_f8_02_cancelled_appointment_is_retained_and_retrievable` from project/ | FR-07, AC-05.2 | 1 passed. The test cancels A1 and asserts the same object is still listed, returned by both store and service lookup (`is`), with status CANCELLED | test_regressions.py l.46 |
+| Architecture and one actual AI decision / known limitation | Domain owns validation and cancel(); store holds the session; services coordinate conflicts; queries are pure; console only interacts. AI decision: Copilot's F8-01 fix guessed `appt.practitioner_id`; we changed only the operator on the real line (fa656fb). Limitation: data is lost on exit | Architecture, responsible AI, limitations | Explained by Khuzaimah | Stage 8 record F, issue #12 |
+| PG reschedule identity/participants/time and no-op | Not applicable (UG) | — | — | — |
+| PG conflict/invalid status/failure non-mutation | Not applicable (UG) | — | — | — |
+| PG old slot / current lookup/list ordering / assurance risks | Not applicable (UG) | — | — | — |
+Stable demo owner / fresh process / command: Khuzaimah, 6 Nov 2026, Python 3.13.1, new process: `python3 main.py --interactive` from project/.
+PG demonstrations through service/tests or not applicable: Not applicable; UG group.
+
 
 
 ## E Final code quality and AI review

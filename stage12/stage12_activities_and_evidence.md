@@ -75,6 +75,7 @@ Remaining failure / limitation: None. 132 passed at 9ac14d8, 526c87f and b4aa5c0
 | PG reschedule identity/participants/time and no-op | Not applicable (UG) | — | — | — |
 | PG conflict/invalid status/failure non-mutation | Not applicable (UG) | — | — | — |
 | PG old slot / current lookup/list ordering / assurance risks | Not applicable (UG) | — | — | — |
+
 Stable demo owner / fresh process / command: Khuzaimah, 6 Nov 2026, Python 3.13.1, new process: `python3 main.py --interactive` from project/.
 
 PG demonstrations through service/tests or not applicable: Not applicable; UG group.
@@ -103,6 +104,7 @@ PG demonstrations through service/tests or not applicable: Not applicable; UG gr
 | F8-02: find_appointment filters out CANCELLED | FR-07 / data_store.py | A1 still listed but lookup returned None | Accept with modification: kept .strip() and blank-ID check | Status filter removed (9d45475) |
 | Stage 7: FR-05 test-design suggestions C3 and C4 | FR-05 tests | Ran against deliberately broken code | Reject; Copilot also missed the cancelled-slot case | T-SVC-12 strengthened (ba47d7b) |
 | Stage 9: query purity and source order not tested | QRY/FP tests | Searched test_queries.py | Reject: tests already existed; Copilot was not given test_queries.py | No change; 45 query tests pass |
+
 Access route or approved equivalent / limitations: GitHub Copilot Chat in VS Code. Tutor to confirm this is the approved route.
 
 Available AI evidence and missing evidence honestly disclosed: Copilot prompts and outputs are on issues #12/#13 and in the Stage 6–9 records. Early drafting help (PR #4, #5, #9, #11) was disclosed in PR descriptions, but the original suggestions were not saved.
@@ -119,6 +121,7 @@ Available AI evidence and missing evidence honestly disclosed: Copilot prompts a
 | Repository structure and architecture responsibilities | project/README.md "Structure" | Aditya | Present: one line per module |
 | Responsible AI summary / synthetic-data rule | project/README.md "AI use"; "Scope and limitations" | Aditya | Present |
 | Release label/version and SHA links | project/README.md release line; root README.md group index | Aditya | Label present; root README index to be updated with the final release SHA after merge |
+
 Root README index and project/README verified: project/README.md verified in the fresh clone at 526c87f. Root README group index still shows Stage 9 and will be updated after the release PR merges.
 
 Fresh clone or extracted ZIP / candidate identity: Fresh `git clone` of https://github.com/Khuzaimah876/st1-assignment-3 into a new folder, `git switch docs/stage12-release`, HEAD 526c87f.
@@ -144,6 +147,7 @@ AI-assisted development note: GitHub Copilot helped draft some code and record t
 | pytest's own dependencies not pinned | A later install could pull newer versions | Low | Add a lock file or pin pluggy/packaging/iniconfig | Yes: development-only, verified in a fresh clone |
 | No GitHub issues for the Stage 8 refactor and Stage 9 work | Weaker traceability | Low | Create an issue before each piece of work | Yes: recorded in Stage 8/9 records and PRs; issue #22 used for Stage 12 |
 | Student IDs in early commit emails and as a GitHub username in records | Privacy in a public repository | Medium | Private noreply emails now used for new commits | Raised with tutor |
+
 Session-only synthetic data and minute-precision local time: All records exist only while the program runs and are synthetic; date/times are local, timezone-naive and stored to the minute.
 
 Production auth/roles, portal, notifications, billing/insurance, clinical AI exclusions: Not provided and out of scope for this course release.
@@ -159,6 +163,7 @@ PG assurance residual risks / owner / status or not applicable: Not applicable (
 |---|---|---|---|---|---|---|
 | README reproducibility (Stage 12 section 5) | At 9ac14d8, project/README.md had no Python version, AI-use summary or release label | Blocks a complete release README | Khuzaimah: add all three (issue #22) | f3491b0, 0f9a7bd, c34a7b6, 9609738, 526c87f (README only) | Fresh clone by Aditya at 526c87f: README commands worked, 132 passed | Teaching-supported Python version to be confirmed by tutor |
 | Student IDs in a public repository (assignment overview privacy rule) | Early commit emails contain student IDs; u3321194 is also Aditya's GitHub username in README and records | Privacy, medium | Team: raise with tutor; new commits use private noreply emails | None yet | Not applicable | Awaiting tutor guidance |
+
 Justified no-change conclusion if no defect found: No application defect found. 132 tests pass at 9ac14d8 and 526c87f, the section D demo showed every required behaviour, and the E review found only minor wording/style items recorded as debt in G. No application code changed in Stage 12.
 
 Release blockers still open / status: None for the application. README gap fixed and verified. Privacy question raised with tutor.

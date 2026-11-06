@@ -49,3 +49,10 @@ Cancelling an appointment changes its status to `CANCELLED`; the same object sta
 - No authentication, patient-conflict, duration-overlap, past-date or clinic-hours rules are implemented.
 - Use synthetic data only; never enter real patient or personal information.
 - Stages 10 and 11 (PG) are not part of this common application.
+
+
+## AI use
+
+GitHub Copilot was used to assist with drafting some code and documentation, as well as the required review, test design and debugging activities. 
+It also helped review the repository against the stage instructions and prepare corrections to the records, including parts of the Stage 12 record. All suggestions were checked against the requirements, code and test results.
+Some were adjusted or rejected where necessary, as explained in the relevant stage records. The team reviewed and tested the work and takes responsibility for everything submitted.

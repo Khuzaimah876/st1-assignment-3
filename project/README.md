@@ -6,7 +6,7 @@ development dependency is pytest 8.3.5. Release: SmartCare v1.0 (course release,
 
 ## Run and test
 
-From this directory (`project/`), in the approved Python environment (tested with Python 3.13.1)
+From this directory (`project/`), in the approved Python environment (tested with Python 3.13.1; you can use `python3` on macOS if `python` is not found):
 
 ```sh
 python -m pip install -r requirements-dev.txt   # if needed

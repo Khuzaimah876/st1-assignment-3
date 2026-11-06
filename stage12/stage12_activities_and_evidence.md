@@ -103,18 +103,19 @@ Available AI evidence and missing evidence honestly disclosed: [response]
 
 | README item | Location | Verifier | Result/gap |
 |---|---|---|---|
-| Purpose and included common/PG scope | [response] | [response] | [response] |
-| Out-of-scope capabilities and known limitations | [response] | [response] | [response] |
-| Confirmed teaching Python version and dependency installation | [response] | [response] | [response] |
-| Working directory / demo / interactive / test commands | [response] | [response] | [response] |
-| Repository structure and architecture responsibilities | [response] | [response] | [response] |
-| Responsible AI summary / synthetic-data rule | [response] | [response] | [response] |
-| Release label/version and SHA links | [response] | [response] | [response] |
-Root README index and project/README verified: [response]
-Fresh clone or extracted ZIP / candidate identity: [response]
-Verifier and clean environment / actual version: [response]
-Setup/run/test commands and observed results: [response]
-Missing local file or setup gap / remedy and recheck: [response]
+| Purpose and included common/PG scope | project/README.md introduction; release line | Aditya | Present: in-memory clinic appointment app, SmartCare v1.0, UG common scope |
+| Out-of-scope capabilities and known limitations | project/README.md "Scope and limitations" | Aditya | Present: session-only, no auth, no patient-conflict/duration/past-date/clinic-hours rules, synthetic data only, PG stages excluded |
+| Confirmed teaching Python version and dependency installation | project/README.md "Run and test" | Aditya | Present: tested with Python 3.13.1; `python -m pip install -r requirements-dev.txt`. Also worked on Python 3.14.1 in the fresh clone. Teaching-supported version still to be confirmed by tutor |
+| Working directory / demo / interactive / test commands | project/README.md "Run and test" | Aditya | Present and worked as written from `project/` |
+| Repository structure and architecture responsibilities | project/README.md "Structure" | Aditya | Present: one line per module |
+| Responsible AI summary / synthetic-data rule | project/README.md "AI use"; "Scope and limitations" | Aditya | Present |
+| Release label/version and SHA links | project/README.md release line; root README.md group index | Aditya | Label present; root README index to be updated with the final release SHA after merge |
+Root README index and project/README verified: project/README.md verified in the fresh clone at 526c87f. Root README group index still shows Stage 9 and will be updated after the release PR merges.
+Fresh clone or extracted ZIP / candidate identity: Fresh `git clone` of https://github.com/Khuzaimah876/st1-assignment-3 into a new folder, `git switch docs/stage12-release`, HEAD 526c87f.
+Verifier and clean environment / actual version: Aditya (not the author), 6 Nov 2026, new virtual environment (`python3 -m venv .venv`), Python 3.14.1 on macOS.
+Setup/run/test commands and observed results: From project/: `python -m pip install -r requirements-dev.txt` installed pytest 8.3.5 (plus pluggy 1.7.0, packaging 26.3, iniconfig 2.3.1); `python main.py` printed "A1: P1 with DR1, 2026-10-01 09:00, scheduled" and "Session-only data: records are lost on exit."; `python -m pytest -q` gave 132 passed.
+Missing local file or setup gap / remedy and recheck: No missing files; no untracked local files were needed. Note: pytest's own dependencies are not pinned, so a later install could pull newer versions; accepted for the course release and recorded in G.
+
 
 
 ## G Known limitations debt and release notes

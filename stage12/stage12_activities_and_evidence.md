@@ -173,12 +173,13 @@ Named substantive contributions: [response]
 
 ## J Human release decision
 
-Decision — READY FOR COURSE RELEASE / READY WITH DOCUMENTED LIMITATIONS / NOT YET READY: [response]
-Approver / date / rationale and evidence: [response]
-What risks remain / conditions / owners: [response]
-Can the team explain the system: [response]
-Can a change be recovered: [response]
-Common decision / PG decision where different: [response]
+Decision - READY FOR COURSE RELEASE / READY WITH DOCUMENTED LIMITATIONS / NOT YET READY: READY WITH DOCUMENTED LIMITATIONS
+Approver / date / rationale and evidence: Khuzaimah, Aditya and Manit, 6 Nov 2026. All 132 tests pass (C), the console demo showed every required behaviour (D), the fresh clone by Aditya reproduced the README setup (F), and no application defect was found (H).
+What risks remain / conditions / owners: Session-only data, no authentication and the other scope limits in G; pytest's own dependencies are unpinned; student-ID privacy question raised with the tutor (team). None blocks the course release.
+Can the team explain the system: Yes. Each member prepared the N table items and can explain their own contribution, the architecture, F8-01 and the AI decisions.
+Can a change be recovered: Yes. 9ac14d8 and the final release SHA are tested commits; any later change is reverted through a reviewed PR without rewriting history.
+Common decision / PG decision where different: Common decision only; PG not applicable.
+
 
 
 ## K Final tested release SHA
@@ -208,12 +209,13 @@ Source ZIP name / SHA correspondence / extracted comparison: [response]
 - [ ] Mixed-group common protection and candidate upload routing checked.
 - [ ] Group reflection, confidential individual peer forms and common team viva routed separately.
 
-Confirmed assessment item/upload route: [response]
-Deadline/timezone: [response]
-Repository access arrangement: [response]
-Mixed-candidate upload arrangement: [response]
-Oral/video recording/accessibility arrangements: [response]
-Remaining administration or release dependency: [response]
+Confirmed assessment item/upload route: Assignment 3 on Canvas, website URL submission of the repository; ZIP route to be confirmed with the tutor.
+Deadline/timezone: Monday 9 Nov 2026, 23:59 Canberra time (AEDT).
+Repository access arrangement: Public GitHub repository: https://github.com/Khuzaimah876/st1-assignment-3
+Mixed-candidate upload arrangement: Not applicable; all members are UG.
+Oral/video recording/accessibility arrangements: Individual oral assessment in Cadmus (6 recorded questions); no special arrangements requested.
+Remaining administration or release dependency: Tutor to confirm the ZIP upload route, the supported Python version and the student-ID privacy question.
+
 
 
 ## M Formative questions

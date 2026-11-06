@@ -120,7 +120,7 @@ Create at least two focused issues. Add a linked practitioner-lookup issue or an
 - Author response/change and verification: Added the test in 95b02c7; 28 passed; summary comment posted on PR #5.
 - Reviewer recheck and approval: CEOOFINDIA approved PR #5 — https://github.com/Khuzaimah876/st1-assignment-3/pull/5. The approval came before 95b02c7 was pushed. CEOOFINDIA later rechecked it and posted the result (`None` ID raises ValueError, appointment stays SCHEDULED; 28 passed on main): https://github.com/Khuzaimah876/st1-assignment-3/pull/5#issuecomment-6593492056
 - Merge outcome and SHA: Merged into main as f5911be02c79c1e05c98d2e838168fca573cb9da
-- Significant Copilot assistance: Copilot used by the reviewer for the required review comparison (see H and I). Implementation drafted with help from an AI assistant (Claude) and disclosed in the PR description.
+- Significant Copilot assistance: Copilot used by the reviewer for the required review comparison (see H and I). Implementation drafted with help from GitHub Copilot and disclosed in the PR description.
 - Linked issue closure: #3 closed on merge
 - Each member updated main: u3321194 — pulled f5911be, 28 passed; Khuzaimah876 — pulled f5911be, 28 passed; CEOOFINDIA — pulled f5911be, 28 passed
 - Integrated verification after merge: `python3 -m pytest` in `project/` on main → 28 passed at f5911be02c79c1e05c98d2e838168fca573cb9da

@@ -8,11 +8,11 @@ Baseline: Stage 6 foundation, 2026 revision 2. This starter deliberately leaves 
 - Group and tutorial: Thursday 2:30–4:30pm tutorial, Group 6
 - Member names, GitHub usernames and UG/PG cohorts: Aditya Vungarala (u3321194, UG); Khuzaimah (Khuzaimah876, UG); Manit Mahajan (CEOOFINDIA, UG)
 - Shared repository URL: https://github.com/Khuzaimah876/st1-assignment-3
-- Latest completed stage: Stage 6 Team Development
-- Verified code SHA: f5911be02c79c1e05c98d2e838168fca573cb9da
-- Test command, working directory and observed result: `python3 -m pytest` in `project/` → 28 passed (8 supplied + 20 Stage 6)
-- Final submitted SHA, if different from tested code SHA: f92c231796dd55af0950e61228cef61c2027c1df. Evidence-only commits (Stage 6 record, PR #6) and this README update; no code changed after f5911be.
-- Unresolved work: none for Stage 6. Stage 9 query/menu TODOs intentionally incomplete.
+- Latest completed stage: Stage 9 Queries and Console Integration
+- Verified code SHA: 9d738a70ed57caba0996738d09a2149cd9aac334 (merge of PR #16)
+- Test command, working directory and observed result: `python3 -m pytest -q` in `project/` → 132 passed (rerun on main at 7516950; code unchanged since 9d738a7)
+- Final submitted SHA, if different from tested code SHA: later commits are evidence-only (Stage 9 record, PR #17, merged as 7516950, and record/README corrections); no code changed after 9d738a7.
+- Unresolved work: none in the code for Stages 6–9. Stage 12 (UG release) not yet started.
 
 Do not put student IDs, private peer ratings, credentials or personal contact details here.
 

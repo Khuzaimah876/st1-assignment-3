@@ -2,11 +2,11 @@
 
 A small in-memory appointment application for clinic staff, built for Software Technology 1 Assignment 3.
 Requirements baseline: SmartCare A3 2026 revision 2. Runtime uses only the Python standard library; the
-development dependency is pytest 8.3.5.
+development dependency is pytest 8.3.5. Release: SmartCare v1.0 (course release, UG common scope). See the root README for the exact release SHA.
 
 ## Run and test
 
-From this directory (`project/`), in the approved Python environment:
+From this directory (`project/`), in the approved Python environment (tested with Python 3.13.1)
 
 ```sh
 python -m pip install -r requirements-dev.txt   # if needed

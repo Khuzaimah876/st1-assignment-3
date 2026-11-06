@@ -22,29 +22,29 @@ For each, choose symptom, evidence or hypothesis/opinion, and explain your reaso
 The example line number is illustrative; inspect the actual line in your run. The removal hypothesis must be tested against the current project, which has no public delete operation.
 
 Response and reason:
-1. "Appointment disappears after cancellation": **Symptom.** It describes what a user or test observed, not why. It needs checking: "disappears" from lookup, from the list, or both?
-2. "The data-store removal path is probably being called": **Hypothesis.** A possible explanation ("probably") that has to be tested. SmartCareDataStore has no public delete method, so it cannot be true as stated. If anything removes the appointment, it would have to be code inside a store method, which is what we would inspect.
-3. "The failing test shows store.find_appointment('A1') returns None": **Evidence.** A concrete, observed value from a real run. It narrows the problem to the store lookup, but on its own does not explain why.
-4. "The service layer is badly designed": **Opinion.** No observation and no check that could confirm or reject it, so it does not help locate the defect.
-5. "Traceback points to smartcare/services.py line 42": **Evidence** of *where the failure was observed*. It is a location, not a cause: the wrong value may have been produced earlier (e.g. in data_store.py) and only noticed at that line.
+1. "Appointment disappears after cancellation": **Symptom.** It explains what happened but does not identify the underlying cause. The word "disappears" also needs clarification, as the appointment may be missing from the lookup, the list, or both.
+2. "The data-store removal path is probably being called": **Hypothesis.** It suggests a possible reason that needs to be tested. However, the store does not have a public delete method, so the removal would need to occur within one of its existing methods.
+3. "The failing test shows store.find_appointment('A1') returns None": **Evidence.** It provides an actual result from a test run. This shows that the appointment lookup returned `None`, helping narrow down where the problem might be, but it does not explain the cause.
+4. "The service layer is badly designed": **Opinion.** It is a personal judgement rather than something supported by evidence. Without specific observations or tests, it cannot help identify the actual problem.
+5. "Traceback points to smartcare/services.py line 42": **Evidence** of where the failure was observed. The traceback identifies the location where the error appeared, but the underlying cause could be earlier in the code, such as in `data_store.py`.
 
 ### A.2 Build a debugging record
 Choose the cancelled-history scenario or a same-practitioner/time booking. Before changing code, record expected behaviour, observed behaviour, minimal reproduction, a hypothesis and evidence to inspect. Use a requirement to justify the expectation. Keep the initial hypothesis even if later evidence disproves it.
 
 Response and reason (cancelled-history scenario, written before any code change):
-- **Expected behaviour:** after `cancel_appointment('A1')`, the same object is still stored with status CANCELLED. `store.find_appointment('A1')` and `service.find_appointment('A1')` return that exact object, and it is still in `list_appointments()`. Requirement: FR-07 / AC-05.2 (cancelled history remains retrievable this session), BR-06/07 (cancellation changes state, does not delete), FR-08 (lookup by ID).
-- **Observed behaviour (tutorial scenario):** after cancelling, lookup of A1 fails (store returns None / service raises LookupError).
-- **Minimal reproduction:** fresh SmartCareDataStore and services; register P1 and D1; book A1 for P1/D1 at 2026-10-01 09:00; cancel A1; call `store.find_appointment('A1')`, `service.find_appointment('A1')` and `store.list_appointments()`.
-- **Initial hypothesis:** the object is still stored, but the store's lookup is filtering by status (e.g. only returning SCHEDULED appointments) rather than the appointment being removed.
-- **Evidence to inspect:** whether A1 is still in `list_appointments()` (stored but not found → lookup problem; missing everywhere → removal problem); its `status` value; the body of `SmartCareDataStore.find_appointment`; whether `Appointment.cancel()` only changes `_status`. We keep this initial hypothesis on record even if the evidence later disproves it.
+- **Expected behaviour:** After `cancel_appointment('A1')` is called, the appointment should remain stored as the same object, with its status changed to CANCELLED. Both `store.find_appointment('A1')` and `service.find_appointment('A1')` should return that exact object, and it should still appear in `list_appointments()`. This follows FR-07 / AC-05.2 (cancelled appointments must remain accessible during the session), BR-06/07 (cancellation changes the appointment's status rather than deleting it) and FR-08 (appointments can be retrieved using their ID).
+- **Observed behaviour (tutorial scenario):** After the appointment is cancelled, trying to find A1 fails. The store returns None, causing the service to raise LookupError.
+- **Minimal reproduction:** Create a fresh SmartCareDataStore and the required services. Register P1 and D1, then book A1 for P1/D1 at 2026-10-01 09:00. Cancel A1 and then call `store.find_appointment('A1')`, `service.find_appointment('A1')` and `store.list_appointments()` to check what happens.
+- **Initial hypothesis:** The appointment may still exist in the store, but the lookup method could be filtering appointments by status, for example, only returning those marked SCHEDULED. This would explain why the appointment cannot be found without actually being deleted.
+- **Evidence to inspect:** Check whether A1 still appears in `list_appointments()`. If it is still stored but cannot be found, the issue is likely with the lookup method. If it is missing from all results, the problem may involve removal. Also check its `status` value, the implementation of `SmartCareDataStore.find_appointment` and whether `Appointment.cancel()` only updates `_status`. We are keeping this initial hypothesis on record, even if later evidence shows it was incorrect.
 
 ### A.3 Test defect or product defect
 A test expects cancelled appointments to be deleted, but FR-07 says history must be retained. What should be changed? Explain why. Also decide whether a test expecting different practitioners at the same time to conflict reflects AC-04.2. Do not assume every failing test is correct.
 
 Response and reason:
-- **Test expecting cancelled appointments to be deleted:** this is a **test defect**. FR-07 and BR-06/07 require the cancelled appointment to be kept with status CANCELLED and stay retrievable (AC-05.2). The test's expectation contradicts the requirement, so the **test** must change: it should assert the same object is still found and listed with status CANCELLED. Changing the code to delete appointments to make the test pass would break a real requirement.
-- **Test expecting different practitioners at the same time to conflict:** also a **test defect**. AC-04.2 says another practitioner at the same time is **permitted**; FR-05 only rejects the *same* practitioner at the exact same datetime with a SCHEDULED booking. The test should instead expect the second booking to succeed and both to be stored.
-- General point: a failing test is only correct if its expectation comes from the requirements. Check the requirement first, then decide whether the product or the test is wrong.
+- **Test expecting cancelled appointments to be deleted:** This is a **test defect** because FR-07 and BR-06/07 state that cancelled appointments must remain stored with status CANCELLED and still be accessible (AC-05.2). The test expects the opposite of what the requirements specify, so the test needs to be corrected. It should check that the same appointment can still be found and appears in the list with status CANCELLED. Deleting the appointment just to satisfy the test would cause the code to break an existing requirement.
+- **Test expecting different practitioners at the same time to conflict:** This is also a **test defect**. AC-04.2 allows different practitioners to have appointments at the same time. FR-05 only prevents bookings when the same practitioner has another SCHEDULED appointment at the exact same datetime. The test should therefore check that the second booking succeeds and that both appointments remain stored.
+- **General point:** A failed test does not automatically mean the code is incorrect. Its expected result must first be checked against the requirements to determine whether the problem is in the implementation or the test itself.
 
 ### A.4 Refactoring smell hunt
 Consider a hypothetical 70-line AppointmentService method containing duplicate status strings, direct collection manipulation, printing, validation and four nested conditionals. Identify the smells and propose small refactorings that preserve required behaviour. The direct collection work replaces the old storage-specific scenario; use the existing SmartCareDataStore boundary. Do not implement an extra architecture.
@@ -204,43 +204,43 @@ Each member's substantive contribution and artefact: **Aditya** — ran the staf
 
 1. What should an engineer do before changing code in response to a failure?
 
-Response: Reproduce the failure, read the exact error, check the requirement to know what *should* happen, form a hypothesis and gather evidence that confirms or rules it out, and have a failing test that shows the problem.
+Response: Before making any code changes, an engineer should reproduce the failure, examine the exact error and check the relevant requirement to understand the expected behaviour. They should then develop a hypothesis, collect evidence to test it and have a failing test that demonstrates the problem.
 
 2. Where should expected behaviour come from during debugging?
 
-Response: From the approved requirements and public contracts (the revision 2 baseline, e.g. FR-05, FR-07, AC-05.2), not from what the code currently does or what a test happens to expect.
+Response: Expected behaviour should be based on the approved requirements and public contracts, such as the revision 2 baseline (e.g. FR-05, FR-07, AC-05.2). It should not be based on the current code behaviour or simply what an existing test expects.
 
 3. What is a debugging hypothesis?
 
-Response: A specific, testable explanation of the cause of a failure, with a check that could prove it wrong. For example: "find_appointment returns None because it filters out CANCELLED appointments; if so, A1 will still appear in list_appointments()".
+Response: A debugging hypothesis is a possible explanation for why something is failing that can be tested and proven wrong. For example, `find_appointment` might return None because it excludes CANCELLED appointments. This could be checked by seeing whether A1 still appears in `list_appointments()`.
 
 4. What is a regression test and why is it retained?
 
-Response: A test that reproduces a defect that was fixed. It is kept in the suite so that if a later change brings the defect back, the test fails straight away.
+Response: A regression test is a test that checks a previously fixed defect. It remains in the test suite to make sure future code changes do not introduce the same problem again. If the defect returns, the test will fail.
 
 5. What is meant by root cause?
 
-Response: The underlying reason the failure happens: the specific faulty decision in the code that, once corrected, removes the symptom, as opposed to where the symptom happened to be noticed.
+Response: Root cause refers to the actual underlying problem responsible for the failure. It is the specific issue in the code that needs to be corrected to resolve the problem, rather than just the location where the failure was noticed.
 
 6. What is refactoring?
 
-Response: Changing the internal structure of code (names, duplication, method size, responsibilities) without changing its external behaviour. All tests pass before and after.
+Response: Refactoring means improving the internal structure of code, such as renaming variables, removing duplication, reducing method size or organising responsibilities, without changing how the program behaves externally. All existing tests should pass both before and after the changes.
 
 7. What is a swallowed exception?
 
-Response: An exception that is caught and then ignored (e.g. `except Exception: pass`), so the failure is hidden instead of reported or handled, which makes defects much harder to find.
+Response: A swallowed exception occurs when an error is caught but ignored instead of being properly reported or handled. For example, `except Exception: pass` hides the failure, making it harder to identify and fix the actual problem.
 
 8. What is a code smell?
 
-Response: A sign in the code that it may be hard to understand or change, such as duplication, a very long method, magic strings, unclear names or a class doing work that belongs elsewhere. It is not necessarily a bug.
+Response: A code smell is an indication that part of the code may be poorly structured or difficult to maintain. Examples include repeated code, overly long methods, magic strings, unclear variable names or classes handling responsibilities that belong elsewhere. It does not necessarily mean there is a bug.
 
 9. How should GitHub Copilot-generated debugging diagnoses be treated?
 
-Response: As hypotheses, not answers. Each suggestion is checked against the requirement, the actual code and a real test run, then accepted, modified or rejected with a reason. Confident wording is not evidence, and Copilot does not replace human diagnosis or review.
+Response: GitHub Copilot's debugging suggestions should be treated as possible explanations rather than confirmed answers. Each suggestion needs to be checked against the requirements, actual code and test results before deciding whether to accept, change or reject it. Confident explanations are not proof, and human judgement and review are still necessary.
 
 10. What is the Stage 8 engineering rule?
 
-Response: Diagnose before you fix: reproduce, check the requirement, test a hypothesis with evidence, make the smallest repair, keep a regression test, and only refactor when all tests pass, then integrate after human review.
+Response: Always diagnose the problem before making changes. Reproduce the failure, check the requirement, test a hypothesis using evidence, apply the smallest suitable fix and keep a regression test to prevent the issue from returning. Only refactor once all tests are passing, and integrate changes after they have been reviewed by a person.
 
 ## L. Completion and handover
 
@@ -257,5 +257,5 @@ Response: Diagnose before you fix: reproduce, check the requirement, test a hypo
 
 Verified integrated code SHA / result: see I.
 Submitted SHA and evidence-only difference if any: Code as integrated at f87e8b6; the later record-only commit for I/J/L changes only this file.
-Unresolved issues or incomplete checks / owner / next action: None for the code. Sections A and K were drafted with AI help and should be reworded in our own words before submission (owner Khuzaimah). Staff tool and project/.stage8_faults/ remain outside Git.
+Unresolved issues or incomplete checks / owner / next action: None for the code. Sections A and K were first drafted with GitHub Copilot's help (PR #11); Aditya has since reworded A.1–A.4, A.6 and K in his own words. A.5 was written from the actual prepared run and was not part of that draft.
 Handover note: Stage 8 integrated at f87e8b6 with 75 passing tests (73 earlier + 2 regression tests in project/tests/test_regressions.py). Both defects are repaired and protected by regression tests; the refactor is verified. Stage 9 starts from main; `list_practitioner_appointments` in services.py is still the Stage 9 NotImplementedError stub.
